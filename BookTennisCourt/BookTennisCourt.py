@@ -148,7 +148,7 @@ def sqlite_get_appointment(conn):
     cur.execute(select_all_query)  
     query_result=cur.fetchall()                                  
     cur.close()
-    return("Appointment Records:\n"+ str(query_result).replace("),", ")\n") ).replace("[","").replace("]","")
+    return("Appointment Records:\n"+ str(query_result).replace("),", ")\n") ).replace("[","").replace("]","")+"\n"
 
 
 def sqlite_delete_old_appointment(conn, appt_time):    
