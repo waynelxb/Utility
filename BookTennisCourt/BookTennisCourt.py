@@ -218,8 +218,8 @@ else:
 
 
 #########>>>>>>>>>>>>> Testing <<<<<<<<<<<<<<<#######
-court_number="3"
-str_military_hour_option=""    
+# court_number="3"
+# str_military_hour_option=""    
 # # str_military_hour_option = "[5,6]"    
 
 ##########################################################################################################
@@ -461,7 +461,8 @@ try:
                 break
             else: 
                 msg_pick_time = str(appointment_date) + " "+ appt_clock_hour +  " is NOT available for "+ court_name+"\n"
-                msg_summary=msg_summary+msg_pick_time         
+                msg_summary=msg_summary+msg_pick_time 
+                print(msg_summary)
         if is_time_slot_available==False:
             raise TimeNotAvailable()   
     else:
@@ -508,42 +509,42 @@ try:
 
 
 except CourtOverbooked:
-    msg_summary=msg_summary+"Exception: " +court_name+" has been overbooked.\n"+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"+ sqlite_get_appointment(conn)
+    msg_summary=msg_summary+"Exception: " +court_name+" has been overbooked.\n"+ sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
     log_process(log_path, msg_summary)    
     send_email(msg_summary, "Failed")   
 
 except EmailNotUsable:
-    msg_summary=msg_summary+"Exception: All the emails in "+str(list_email)+" have been overused!\n"+sqlite_get_appointment(conn)
+    msg_summary=msg_summary+"Exception: All the emails in "+str(list_email)+" have been overused!\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
     log_process(log_path, msg_summary)    
     send_email(msg_summary, "Failed")    
     
 except ElementLocatorNotExists as e:
     driver.quit()
-    msg_summary=msg_summary+"Error: "+ e.message +" cannot be loacated.\n" +"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+sqlite_get_appointment(conn)
+    msg_summary=msg_summary+"Error: "+ e.message +" cannot be loacated.\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
     log_process(log_path, msg_summary)    
     send_email(msg_summary, "Failed")
     
 except CourtNumberNotExists:
-    message=msg_summary+"Error: Court "+ court_number + " doesn't exist.\n"+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+sqlite_get_appointment(conn) 
-    print(message)
-    log_process(log_path, message)
+    msg_summary=msg_summary+"Error: Court "+ court_number + " doesn't exist.\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
+    print(msg_summary)
+    log_process(log_path, msg_summary)
     send_email(msg_summary, "Failed")
     
 except TimeNotAvailable:
     driver.quit()
-    message=msg_summary+"Error: No time slot in "+ str(list_military_hour_option) + " is available.\n"+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+sqlite_get_appointment(conn) 
-    print(message)
-    log_process(log_path, message)
+    msg_summary=msg_summary+"Error: No time slot in "+ str(list_military_hour_option) + " is available.\n"+sqlite_get_appointment(conn) +"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
+    print(msg_summary)
+    log_process(log_path, msg_summary)
     send_email(msg_summary, "Failed")   
 
 except: 
     driver.quit()    
     exc_type, exc_value, exc_traceback = sys.exc_info()
     exceptMessage=repr(traceback.format_exception(exc_type, exc_value, exc_traceback))
-    msg_summary=msg_summary+"Error: "+exceptMessage +"\n" +"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+sqlite_get_appointment(conn)
+    msg_summary=msg_summary+"Error: "+exceptMessage +"\n" +sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)   
     log_process(log_path, msg_summary)
     send_email(msg_summary, "Failed")
