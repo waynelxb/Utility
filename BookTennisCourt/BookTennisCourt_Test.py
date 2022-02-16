@@ -1,3 +1,7 @@
+###########################
+##### Version 2.0 #########
+###########################
+
 import os
 import time
 import sys
@@ -144,7 +148,7 @@ def sqlite_get_appointment(conn):
     cur.execute(select_all_query)  
     query_result=cur.fetchall()                                  
     cur.close()
-    return("Appointment Records:\n"+ str(query_result).replace("),", ")\n") ).replace("[","").replace("]","")
+    return("Appointment Records:\n"+ str(query_result).replace("),", ")\n") ).replace("[","").replace("]","")+"\n"
 
 
 def sqlite_delete_old_appointment(conn, appt_time):    
@@ -170,9 +174,9 @@ def sqlite_check_court_availability(conn, court_number, appt_time):
     query_result=cur.fetchone()  
     cur.close()        
     if str(query_result)=="None":        
-        return(True)
+        return True
     else:
-        return(False)
+        return False
 
 
 def sqlite_check_email_usability(conn, email, appt_time, court_number):    
@@ -195,9 +199,9 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
     # print(check_email_query)
     # print("check_email_query result: "+ str(query_result))
     if str(query_result)=="None":
-        return(True)
+        return True
     else:
-        return(False)   
+        return False   
 
 
 #################################################################################################
