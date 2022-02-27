@@ -300,7 +300,7 @@ try:
         else:
             #### use the default hour list    
             if(appointment_date.weekday()>=5):
-                list_military_hour_option=[9,10,11,12,14,15,16,17,18]
+                list_military_hour_option=[5,9,10,11,12,14,15,16,17,18]
             else:
                 list_military_hour_option=[17,16,18,15,14,13]   
                 
@@ -329,9 +329,9 @@ try:
                 break   
         #### all emails are overused
         if is_email_usable==False:
-            raise EmailNotUsable()                  
+            raise EmailNotUsable()  
+            
     
-        
         msg_summary=msg_summary+"Login Time: "+str_login_time + "\n"   
         msg_summary=msg_summary+"Login Email: "+login_email+"\n"
         msg_summary=msg_summary+"Court Name: " + court_name +"\n"
@@ -357,8 +357,9 @@ try:
         
         ######## Confirm login email    
         xpath_element_register_button="//label[@for='submit-formRegister']/span[text()='Next']"         
-        element_register_button=get_element_wait_for_load("XPATH",xpath_element_register_button)      
-        element_register_button.click()        
+        element_register_button=get_element_wait_for_load("XPATH",xpath_element_register_button)  
+        driver.execute_script("arguments[0].click();", element_register_button)
+        # element_register_button.click()        
         msg_email_register="Login email has been registered.\n"         
         msg_summary=msg_summary+msg_email_register        
     
@@ -374,8 +375,9 @@ try:
       
         #### Click the button to confirm password
         xpath_element_password_submit_button='//button[@type="submit"]'
-        element_password_submit_button=get_element_wait_for_load("XPATH",xpath_element_password_submit_button)                 
-        element_password_submit_button.click()               
+        element_password_submit_button=get_element_wait_for_load("XPATH",xpath_element_password_submit_button) 
+        driver.execute_script("arguments[0].click();", element_password_submit_button)                
+        # element_password_submit_button.click()               
     
         ######## Switch to the court page        
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
@@ -390,8 +392,9 @@ try:
         ######## Click NEXT button to confirm court selection        
         time.sleep(sleep_second)  
         xpath_element_court_confirmation_button="//button[@id='app-next-button']"
-        element_count_confirmation_button=get_element_wait_for_load("XPATH",xpath_element_court_confirmation_button)            
-        element_count_confirmation_button.click()
+        element_count_confirmation_button=get_element_wait_for_load("XPATH",xpath_element_court_confirmation_button) 
+        driver.execute_script("arguments[0].click();", element_count_confirmation_button)              
+        # element_count_confirmation_button.click()
         msg_pick_court=court_name + " has been confirmed.\n"
         msg_summary=msg_summary+msg_pick_court             
         
@@ -421,7 +424,8 @@ try:
             
             if element_active_date != "None":
                 # element_date_option=driver.find_element(By.XPATH, xpath_element_active_date)
-                element_active_date.click()
+                # element_active_date.click()
+                driver.execute_script("arguments[0].click();", element_active_date)   
                 msg_pick_date=str(appointment_date) + " for "+court_name+" has been selected.\n"
                 msg_summary=msg_summary+msg_pick_date  
                 ### check whether the email has been overused, if yes, then try another login email             
@@ -449,11 +453,13 @@ try:
         is_time_slot_available=False    
         for appt_military_hour in list_military_hour_option:
             appt_clock_hour=get_clock_hour(int(appt_military_hour))        
-            xpath_element_time_option="//button[contains(@class, 'btn-link app-calendar-time-item available')][@tabindex='0']/span[text()='"+appt_clock_hour+"']"   
-            # element_time_option=get_element_wait_for_load("XPATH", xpath_element_time_option)              
-            if check_element_existence("XPATH", xpath_element_time_option) == True:
-                element_time_option=driver.find_element(By.XPATH, xpath_element_time_option)
-                element_time_option.click()    
+            xpath_element_active_time_button="//button[contains(@class, 'btn-link app-calendar-time-item available')][@tabindex='0']/span[text()='"+appt_clock_hour+"']"            
+            if check_element_existence("XPATH", xpath_element_active_time_button) == True:
+                #### Sometimes button cannot be clicked, then set the click on its span
+                xpath_element_active_time="//span[@class='app-calendar-time'][text()='"+appt_clock_hour+"']"                
+                element_active_time=driver.find_element(By.XPATH, xpath_element_active_time)
+                # element_active_time.click()    
+                driver.execute_script("arguments[0].click();", element_active_time)   
                 str_appointment_time=str_appointment_date + " "+ appt_clock_hour
                 msg_pick_time=str_appointment_time + " is available and has been selected for "+ court_name+"\n"
                 msg_summary=msg_summary+msg_pick_time  
@@ -467,7 +473,6 @@ try:
             raise TimeNotAvailable()   
     else:
       raise ElementLocatorNotExists(xpath_element_app_calendar_time_item)     
-
       
 ######## Switch to the page to confirm user name
     driver.switch_to.window(driver.window_handles[-1])   
@@ -480,7 +485,8 @@ try:
     xpath_element_user_name_confirmation_button="//label[@for='submit-formIntake']/span[text()='Next']"
     element_user_name_confirmation_button=get_element_wait_for_load("XPATH",xpath_element_user_name_confirmation_button)      
     # element_user_name_confirmation_button=driver.find_element(By.XPATH, xpath_element_user_name_confirmation_button)
-    element_user_name_confirmation_button.click()    
+    # element_user_name_confirmation_button.click()
+    driver.execute_script("arguments[0].click();", element_user_name_confirmation_button)  
     msg_confirm_user_name="User name " + user_name +" has been confirmed.\n"
     msg_summary=msg_summary+msg_confirm_user_name  
 
@@ -490,7 +496,8 @@ try:
     xpath_element_final_confirmation_button="//button[@id='app-next-button']"
     # element_final_confirmation_button=driver.find_element(By.XPATH, xpath_element_final_confirmation_button)
     element_final_confirmation_button=get_element_wait_for_load("XPATH",xpath_element_final_confirmation_button)      
-    element_final_confirmation_button.click()    
+    # element_final_confirmation_button.click()    
+    driver.execute_script("arguments[0].click();", element_final_confirmation_button)  
     
 ######## Switch to the appoitment receipt(StartOver) page
     driver.switch_to.window(driver.window_handles[-1])   
