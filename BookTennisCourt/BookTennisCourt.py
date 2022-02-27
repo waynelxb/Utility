@@ -300,7 +300,7 @@ try:
         else:
             #### use the default hour list    
             if(appointment_date.weekday()>=5):
-                list_military_hour_option=[5,9,10,11,12,14,15,16,17,18]
+                list_military_hour_option=[9,10,11,12,14,15,16,17,18]
             else:
                 list_military_hour_option=[17,16,18,15,14,13]   
                 
