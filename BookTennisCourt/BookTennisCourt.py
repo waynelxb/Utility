@@ -300,7 +300,7 @@ try:
         else:
             #### use the default hour list    
             if(appointment_date.weekday()>=5):
-                list_military_hour_option=[9,10,11,12,14,15,16,17,18]
+                list_military_hour_option=[5,9,10,11,12,14,15,16,17,18]
             else:
                 list_military_hour_option=[17,16,18,15,14,13]   
                 
@@ -360,7 +360,7 @@ try:
         element_register_button=get_element_wait_for_load("XPATH",xpath_element_register_button)  
         driver.execute_script("arguments[0].click();", element_register_button)
         # element_register_button.click()        
-        msg_email_register="Login email has been registered.\n"         
+        msg_email_register=datetime.now().strftime("%Y-%m-%d %H:%M:%S")+ "|Login email has been registered.\n"         
         msg_summary=msg_summary+msg_email_register        
     
         ######## Swith to the password page
@@ -369,7 +369,7 @@ try:
         class_name_element_password_inputbox="password-input"        
         element_password_inputbox=get_element_wait_for_load("CLASS_NAME",class_name_element_password_inputbox)         
         element_password_inputbox.send_keys(login_password)        
-        msg_email_register="Password has been input.\n"         
+        msg_email_register=datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"|Password has been input.\n"         
         msg_summary=msg_summary+msg_email_register            
         time.sleep(sleep_second)  
       
@@ -395,7 +395,7 @@ try:
         element_count_confirmation_button=get_element_wait_for_load("XPATH",xpath_element_court_confirmation_button) 
         driver.execute_script("arguments[0].click();", element_count_confirmation_button)              
         # element_count_confirmation_button.click()
-        msg_pick_court=court_name + " has been confirmed.\n"
+        msg_pick_court=datetime.now().strftime("%Y-%m-%d %H:%M:%S")+ "|"+court_name + " has been confirmed.\n"
         msg_summary=msg_summary+msg_pick_court             
         
         ######## Switch to calendar page to pick date and time  
@@ -426,7 +426,7 @@ try:
                 # element_date_option=driver.find_element(By.XPATH, xpath_element_active_date)
                 # element_active_date.click()
                 driver.execute_script("arguments[0].click();", element_active_date)   
-                msg_pick_date=str(appointment_date) + " for "+court_name+" has been selected.\n"
+                msg_pick_date=datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"|"+str(appointment_date) + " for "+court_name+" has been selected.\n"
                 msg_summary=msg_summary+msg_pick_date  
                 ### check whether the email has been overused, if yes, then try another login email             
             elif get_element_wait_for_load("XPATH", xpath_element_no_date_available_due_to_login_email_overused) != "None":
@@ -461,7 +461,7 @@ try:
                 # element_active_time.click()    
                 driver.execute_script("arguments[0].click();", element_active_time)   
                 str_appointment_time=str_appointment_date + " "+ appt_clock_hour
-                msg_pick_time=str_appointment_time + " is available and has been selected for "+ court_name+"\n"
+                msg_pick_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"|"+str_appointment_time + " is available and has been selected for "+ court_name+"\n"
                 msg_summary=msg_summary+msg_pick_time  
                 is_time_slot_available=True
                 break
@@ -487,7 +487,7 @@ try:
     # element_user_name_confirmation_button=driver.find_element(By.XPATH, xpath_element_user_name_confirmation_button)
     # element_user_name_confirmation_button.click()
     driver.execute_script("arguments[0].click();", element_user_name_confirmation_button)  
-    msg_confirm_user_name="User name " + user_name +" has been confirmed.\n"
+    msg_confirm_user_name=datetime.now().strftime("%Y-%m-%d %H:%M:%S")+ "|"+"User name " + user_name +" has been confirmed.\n"
     msg_summary=msg_summary+msg_confirm_user_name  
 
 ######## Switch to final confirmation page
@@ -505,7 +505,7 @@ try:
     # wait_for_load("XPATH", xpath_element_startover_button)      
     if get_element_wait_for_load("XPATH", xpath_element_startover_button) != "None":    
         #### No need to click StartOver, the appearance of this page means the appointment has been booked.
-        msg_confirm_booking = str_appointment_time +" on "+court_name+" has been booked successfully.\n"
+        msg_confirm_booking =datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"|"+ str_appointment_time +" on "+court_name+" has been booked successfully.\n"
         sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_appointment_time, court_number,"Succeeded")       
         msg_summary=msg_summary+msg_confirm_booking+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log_process(log_path, msg_summary)
