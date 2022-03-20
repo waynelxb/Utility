@@ -468,7 +468,7 @@ try:
             else: 
                 msg_pick_time = str(appointment_date) + " "+ appt_clock_hour +  " is NOT available for "+ court_name+"\n"
                 msg_summary=msg_summary+msg_pick_time 
-                print(msg_summary)
+                # print(msg_summary)
         if is_time_slot_available==False:
             raise TimeNotAvailable()   
     else:
