@@ -229,19 +229,19 @@ enable_purge_record=False
 
 
 ###### login email list
-list_email=["waynelxb@gmail.com","befwaynelxb@gmail.com","liuxinbo.utube@gmail.com","apulxb@gmail.com"]
-# list_email=["waynelxb@gmail.com","liuxinbo.utube@gmail.com"]
+list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com"]
 ######## One password for all login emails     
-login_password="TENdl@1125"
+login_password="COUdl@1125"
 
-######## Convert court_number to court_name 
+######## Convert court_label to court_label 
 if (court_number=="2"):
-    court_name="Court 2 (Center Court)"
+    court_label="Court #2 Arrive Residents Only"
 elif (court_number=="3"):
-    court_name="Court 3 (North Court)"
+    court_label="Court #3 Arrive Residents Only"
 else:
     raise CourtNumberNotExists() 
 
+ 
 ######## Generate batch id and msg_summary
 batch_id=int(datetime.now().strftime("%Y%m%d%H%M%S"))
 msg_summary="\n\n"+"BatchID: "+str(batch_id) + "\n"   
@@ -249,14 +249,14 @@ msg_summary="\n\n"+"BatchID: "+str(batch_id) + "\n"
       
 #################### Static Input Parameter: Program Configuration ##########################
 ##### Log file and db file are put in Data folder
-log_path="C:/Projects/GitHub/BookTennisCourtData/BookTennisCourtLog.txt"    
-db_file_path="C:/Projects/GitHub/BookTennisCourtData/TennisCourtBooking.db"
+log_path="D:/Projects/GitHub/BookTennisCourtData/BookTennisCourtLog.txt"    
+db_file_path="D:/Projects/GitHub/BookTennisCourtData/TennisCourtBooking.db"
 
 ##### Chrome driver is put in project code folder
-chrome_driver_path = "C:/Projects/GitHub/UtilityRepository/BookTennisCourt/chromedriver.exe"   
+chrome_driver_path = "D:/Projects/GitHub/UtilityRepository/BookTennisCourt/chromedriver.exe"   
 
 profile_directory=r"–user-data-dir=C:\Users\Me\AppData\Local\Google\Chrome\User Data"
-login_url="https://booking.appointy.com/en-US/tennisonthelake/bookings/login"
+login_url="https://app.courtreserve.com/Online/Account/LogIn/7629"
 
 create_table_script="""CREATE TABLE IF NOT EXISTS Appointment
                        (
@@ -282,61 +282,71 @@ try:
 
     ######## Test record 
     ### sqlite_insert_appointment(conn, 111111, 'waynelxb@gmail.com', '2022-2-14', '2022-2-21', 3, 'EmailOverused') 
-
     ######## At the end of the while loop, if is_email_usable=False, another login_email will be used.    
+    
     is_email_usable=False
     while is_email_usable==False:   
-        ##### Get login time        
+        ##### Get login time         
         now=datetime.now()
         str_login_time=now.strftime("%Y-%m-%d %H:%M:%S") 
-        appointment_date=(now + timedelta(days=7)).date()
-        str_appointment_date=str(appointment_date)
-        str_appointment_day_of_month=str(appointment_date.day)             
-        
+        attribute_current_date_short_date=now.strftime("%#m/%#d/%Y")         
+        # print(attribute_current_date_short_date)       
+
+        #### The courts on the date which is 7 days later than the current date are released at 12pm. 
+        str_court_release_time=now.strftime("%Y-%m-%d")+" "+"12:00:00"
+        dt_login_time=datetime.strptime(str_login_time, "%Y-%m-%d %H:%M:%S")
+        dt_court_release_time=datetime.strptime(str_court_release_time, "%Y-%m-%d %H:%M:%S")
+        if dt_login_time >= dt_court_release_time:
+            dt_target_date=(now + timedelta(days=7)).date()
+        else:
+            dt_target_date=(now + timedelta(days=6)).date()
+             
+        str_target_date=str(dt_target_date) 
+        # xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='Friday, April 1, 2022']"                                                                                        
+        attribute_target_date=dt_target_date.strftime("%A, %B %#d, %Y")   
+        # print(attribute_target_date)        
+
         ####### If the length of str_military_hour_option is longer than 2, then conver it to a list, or use the default hour list   
         input_option_length=len(str_military_hour_option)        
         if(input_option_length>2):             
             list_military_hour_option=str_military_hour_option[1:input_option_length-1].split(',')
         else:
             #### use the default hour list    
-            if(appointment_date.weekday()>=5):
-                list_military_hour_option=[5,9,10,11,12,14,15,16,17,18]
+            if(dt_target_date.weekday()>=5):
+                list_military_hour_option=[14,15,16,17,18,10,11]
             else:
-                list_military_hour_option=[17,16,18,15,14,13]   
+                list_military_hour_option=[15,16,17,18,19]   
                 
         #### Delete the old records not in the current appoitment week  
-        sqlite_delete_old_appointment(conn, str_appointment_date)
+        sqlite_delete_old_appointment(conn, str_target_date)
 
         #### Check whehter the court has been logged as overused  
-        if sqlite_check_court_availability(conn, court_number, str_appointment_date)==False:
-            raise CourtOverbooked()               
-            
+        if sqlite_check_court_availability(conn, court_number, str_target_date)==False:
+            raise CourtOverbooked()         
+        
         #### Find usable login email   
         login_email=""              
         for email in list_email:
             # print(email)
-            if sqlite_check_email_usability(conn, email, str_appointment_date, court_number)  == True:
+            if sqlite_check_email_usability(conn, email, str_target_date, court_number)  == True:
                 login_email=email  
-                if login_email=="waynelxb@gmail.com":
-                    user_name="Eric"
-                if login_email=="befwaynelxb@gmail.com":
-                    user_name="befwaynelxb"    
+                if login_email=="xinbo.liu@gmail.com":
+                    user_name="Xinbo"  
                 if login_email=="liuxinbo.utube@gmail.com":
-                    user_name="Utube"
-                if login_email=="apulxb@gmail.com":
-                    user_name="Apu" 
+                    user_name="Utube" 
                 is_email_usable=True
                 break   
         #### all emails are overused
         if is_email_usable==False:
-            raise EmailNotUsable()  
+            raise EmailNotUsable()    
             
-    
+
         msg_summary=msg_summary+"Login Time: "+str_login_time + "\n"   
         msg_summary=msg_summary+"Login Email: "+login_email+"\n"
-        msg_summary=msg_summary+"Court Name: " + court_name +"\n"
-        msg_summary=msg_summary+"Appointment Date: "+str_appointment_date+" "+appointment_date.strftime('%A')+"\n"
-        msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"
+        msg_summary=msg_summary+"Court Name: " + court_label +"\n"
+        msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"       
+        # print(msg_summary)            
+                  
 
 
         ####### Create chrome driver       
@@ -347,176 +357,116 @@ try:
         options.add_argument('--ignore-ssl-errors')
         options.add_experimental_option("excludeSwitches", ["enable-logging"])       
         driver = webdriver.Chrome(service=svc, options=options)
-        # driver.implicitly_wait(implicitly_wait_second) ## seconds  
         
-        ######## Open email register page
-        driver.get(login_url)
-        id_element_email_inputbox="email" 
+        
+        # driver.implicitly_wait(3) ## seconds  
+        
+        ######## Open Login page
+        driver.get(login_url)        
+        #### input email       
+        id_element_email_inputbox="UserNameOrEmail" 
         element_email_inputbox=get_element_wait_for_load("ID",id_element_email_inputbox)      
-        element_email_inputbox.send_keys(login_email)        
-        
-        ######## Confirm login email    
-        xpath_element_register_button="//label[@for='submit-formRegister']/span[text()='Next']"         
-        element_register_button=get_element_wait_for_load("XPATH",xpath_element_register_button)  
-        driver.execute_script("arguments[0].click();", element_register_button)
-        # element_register_button.click()        
-        msg_email_register=datetime.now().strftime("%Y-%m-%d %H:%M:%S")+ "|Login email has been registered.\n"         
-        msg_summary=msg_summary+msg_email_register        
-    
-        ######## Swith to the password page
-        driver.switch_to.window(driver.window_handles[1])
+        element_email_inputbox.send_keys(login_email)      
         #### Input password 
-        class_name_element_password_inputbox="password-input"        
-        element_password_inputbox=get_element_wait_for_load("CLASS_NAME",class_name_element_password_inputbox)         
-        element_password_inputbox.send_keys(login_password)        
-        msg_email_register=datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"|Password has been input.\n"         
-        msg_summary=msg_summary+msg_email_register            
-        time.sleep(sleep_second)  
-      
-        #### Click the button to confirm password
-        xpath_element_password_submit_button='//button[@type="submit"]'
+        id_element_password_inputbox="Password"        
+        element_password_inputbox=get_element_wait_for_load("ID",id_element_password_inputbox)         
+        element_password_inputbox.send_keys(login_password)     
+        ### Click button               
+        xpath_element_password_submit_button="//button[@class='btn btn-log btn-block btn-thm btn-submit']"
         element_password_submit_button=get_element_wait_for_load("XPATH",xpath_element_password_submit_button) 
-        driver.execute_script("arguments[0].click();", element_password_submit_button)                
-        # element_password_submit_button.click()               
-    
-        ######## Switch to the court page        
+        element_password_submit_button.click()        
+        
+
+        ######## Switch to Announcements page        
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
         driver.switch_to.window(driver.window_handles[-1])
-        
-        ######## Pick court   
-        xpath_element_court_name="//span[text()='"+court_name+"']" 
-        element_court_option=get_element_wait_for_load("XPATH",xpath_element_court_name)          
-        element_court_option.click()   
-
-        
-        ######## Click NEXT button to confirm court selection        
-        time.sleep(sleep_second)  
-        xpath_element_court_confirmation_button="//button[@id='app-next-button']"
-        element_count_confirmation_button=get_element_wait_for_load("XPATH",xpath_element_court_confirmation_button) 
-        driver.execute_script("arguments[0].click();", element_count_confirmation_button)              
-        # element_count_confirmation_button.click()
-        msg_pick_court=datetime.now().strftime("%Y-%m-%d %H:%M:%S")+ "|"+court_name + " has been confirmed.\n"
-        msg_summary=msg_summary+msg_pick_court             
-        
-        ######## Switch to calendar page to pick date and time  
-        WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))                   
-        driver.switch_to.window(driver.window_handles[-1])     
-        
-        #### make sure appointment_day_of_month show up on the page, then continue    
-        xpath_element_appointment_day_of_month="//button[contains(@class, 'btn-link ng-tns-')]/span[text()='"+str_appointment_day_of_month+"']"      
-        
-        if get_element_wait_for_load("XPATH", xpath_element_appointment_day_of_month)!="None":          
-            # time.sleep(sleep_second)             
-            ### element for active date      
-            ### <button class="btn-link ng-tns-c5-4 ng-star-inserted" position="bottom" data-tippy="" tabindex="0"><span class="ng-tns-c5-4">20</span><span class="app-calendar-month-name active"></button>
-            xpath_element_active_date="//button[contains(@class, 'btn-link ng-tns-')][@tabindex='0']/span[text()='"+str_appointment_day_of_month+"']"
-            ### element for inactive date due to overused email            
-            ### <button class="btn-link ng-tns-c2-6 disabled ng-star-inserted" position="bottom" data-tippy="" tabindex="-1" data-original-title="You are allowed to book 3 service weekly "><span class="ng-tns-c2-6">18</span><span class="app-calendar-month-name active"><!----><span class="icon icon-calendar-insert ng-tns-c2-6 ng-star-inserted"></span><!----></span></button>                          
-            xpath_element_no_date_available_due_to_login_email_overused="//button[contains(@class, 'btn-link ng-tns-')][@tabindex='-1'][@data-original-title='You are allowed to book 3 service weekly ']/span[text()='"+str_appointment_day_of_month+"']"     
-           
-            ### element for inactive date due to overbookd court
-            ### <button class="btn-link ng-tns-c5-4 disabled ng-star-inserted" position="bottom" data-tippy="" tabindex="-1" data-original-title="Not Available"><span class="ng-tns-c5-4">20</span><span class="app-calendar-month-name active"><!----> Mar <!----></span></button>
-            xpath_element_no_date_available_due_to_court_overbooked="//button[contains(@class, 'btn-link ng-tns-')][@tabindex='-1'][@data-original-title='Not Available']/span[text()='"+str_appointment_day_of_month+"']"    
-      
-            element_active_date=get_element_wait_for_load("XPATH", xpath_element_active_date)         
-            # element_no_date_available_due_to_login_email_overused=get_element_wait_for_load("XPATH", xpath_element_no_date_available_due_to_login_email_overused)  
-            # element_no_date_available_due_to_court_overbooked=get_element_wait_for_load("XPATH", xpath_element_no_date_available_due_to_court_overbooked)  
+        #### Click Arrive Streeterville
+        xpath_element_ArriveStreeterville="//li[@data-sm-show='true']/a[text()='Arrive Streeterville ']"      
+        element_ArriveStreeterville=get_element_wait_for_load("XPATH",xpath_element_ArriveStreeterville)          
+        element_ArriveStreeterville.click()   
             
-            if element_active_date != "None":
-                # element_date_option=driver.find_element(By.XPATH, xpath_element_active_date)
-                # element_active_date.click()
-                driver.execute_script("arguments[0].click();", element_active_date)   
-                msg_pick_date=datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"|"+str(appointment_date) + " for "+court_name+" has been selected.\n"
-                msg_summary=msg_summary+msg_pick_date  
-                ### check whether the email has been overused, if yes, then try another login email             
-            elif get_element_wait_for_load("XPATH", xpath_element_no_date_available_due_to_login_email_overused) != "None":
-                driver.quit()                              
-                sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_appointment_date, court_number, "EmailOverused")
-                msg_pick_date="Description: " + login_email +" has been overused. Another login email will be used.\n"         
-                msg_summary=msg_summary+msg_pick_date+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                log_process(log_path, msg_summary)
-                send_email(msg_summary, "Failed")            
-                is_email_usable=False               
-                ### then check whether the court has been overbooked       
-            elif get_element_wait_for_load("XPATH", xpath_element_no_date_available_due_to_court_overbooked) != "None":    
-                driver.quit()                                 
-                sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_appointment_date, court_number, "CourtOverbooked")  
-                raise CourtOverbooked()
-            else:
-                raise ElementLocatorNotExists("The element xpath of appointment day of month " + str_appointment_day_of_month)             
-            
-    ############### This part need to enhance speed use time item  
-    # <button class="btn-link app-calendar-time-item available" container="body" placement="left" triggers="manual" data-tippy="" data-original-title="2022-02-16T05:32:41.908Z" tabindex="0"><span class="app-calendar-time">05:00 AM</span><!----></button>
-    xpath_element_app_calendar_time_item="//button[contains(@class, 'app-calendar-time-item')]"      
-    if get_element_wait_for_load("XPATH", xpath_element_app_calendar_time_item)!="None":        
-        #### Pick time slot    
-        is_time_slot_available=False    
-        for appt_military_hour in list_military_hour_option:
-            appt_clock_hour=get_clock_hour(int(appt_military_hour))        
-            xpath_element_active_time_button="//button[contains(@class, 'btn-link app-calendar-time-item available')][@tabindex='0']/span[text()='"+appt_clock_hour+"']"            
-            if check_element_existence("XPATH", xpath_element_active_time_button) == True:
-                #### Sometimes button cannot be clicked, then set the click on its span
-                xpath_element_active_time="//span[@class='app-calendar-time'][text()='"+appt_clock_hour+"']"                
-                element_active_time=driver.find_element(By.XPATH, xpath_element_active_time)
-                # element_active_time.click()    
-                driver.execute_script("arguments[0].click();", element_active_time)   
-                str_appointment_time=str_appointment_date + " "+ appt_clock_hour
-                msg_pick_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"|"+str_appointment_time + " is available and has been selected for "+ court_name+"\n"
-                msg_summary=msg_summary+msg_pick_time  
-                is_time_slot_available=True
+        
+        ######## Switch to Schedule page       
+        WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
+        driver.switch_to.window(driver.window_handles[-1])        
+        ### Click Current Date to get the drop-down menu
+        xpath_element_button_currentdate="//span[@data-bind='text: formattedShortDate'][text()='"+ attribute_current_date_short_date + "']"      
+        element_button_currentdate=get_element_wait_for_load("XPATH",xpath_element_button_currentdate)          
+        element_button_currentdate.click()          
+        time.sleep(2)  
+        ### Click target date
+        # <a tabindex="-1" class="k-link" href="#" data-value="2022/3/1" title="Friday, April 1, 2022">1</a> 
+        xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='"+ attribute_target_date +"']"      
+        element_button_target_date=get_element_wait_for_load("XPATH",xpath_element_button_target_date)          
+        element_button_target_date.click()   
+        
+        
+        ######## Switch to the target date page   
+        WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
+        driver.switch_to.window(driver.window_handles[-1])  
+        ### Find and click available target hour
+        is_target_hour_available=False 
+        for target_military_hour in list_military_hour_option:          
+            target_hour=("0"+str(target_military_hour))[-2:]+":00:00"            
+            attribute_target_date_hour=dt_target_date.strftime("%a %b %d %Y") +" "+ target_hour     
+            ### str_target_date_hour is used in database
+            str_target_date_hour=dt_target_date.strftime("%Y-%m-%d") +" "+ target_hour   
+            # print(str_target_date_hour)                       
+            # <button start="Fri Apr 01 2022 08:00:00 GMT-0500 (Central Daylight Time)" end="Fri Apr 01 2022 09:00:00 GMT-0500 (Central Daylight Time)" instructorid="undefined" courtlabel="Court #3 Arrive Residents Only" class="btn btn-default slot-btn m-auto">Reserve 8:00 AM</button>
+            xpath_element_button_target_date_court_time="//button[contains(@start, '"+attribute_target_date_hour +"')][@courtlabel='"+court_label+"'][@class='btn btn-default slot-btn m-auto']"         
+            # print(xpath_element_button_target_date_court_time)                       
+            if get_element_wait_for_load("XPATH", xpath_element_button_target_date_court_time) != "None":                
+                element_button_target_date_court_time=get_element_wait_for_load("XPATH",xpath_element_button_target_date_court_time)                 
+                element_button_target_date_court_time.click()                    
+                msg_summary=msg_summary+attribute_target_date_hour +" is available for court "+ str(court_number)+"\n"
+                is_target_hour_available=True
                 break
             else: 
-                msg_pick_time = str(appointment_date) + " "+ appt_clock_hour +  " is NOT available for "+ court_name+"\n"
-                msg_summary=msg_summary+msg_pick_time 
-                # print(msg_summary)
-        if is_time_slot_available==False:
-            raise TimeNotAvailable()   
-    else:
-      raise ElementLocatorNotExists(xpath_element_app_calendar_time_item)     
-      
-######## Switch to the page to confirm user name
-    driver.switch_to.window(driver.window_handles[-1])   
-    #### Input user name
-    xpath_element_user_name="//input[@type='text']"  
-    element_input_user_name=get_element_wait_for_load("XPATH",xpath_element_user_name)  
-    element_input_user_name.send_keys(user_name)
-   
-    #### Click the button NEXT to confirm user name   
-    xpath_element_user_name_confirmation_button="//label[@for='submit-formIntake']/span[text()='Next']"
-    element_user_name_confirmation_button=get_element_wait_for_load("XPATH",xpath_element_user_name_confirmation_button)      
-    # element_user_name_confirmation_button=driver.find_element(By.XPATH, xpath_element_user_name_confirmation_button)
-    # element_user_name_confirmation_button.click()
-    driver.execute_script("arguments[0].click();", element_user_name_confirmation_button)  
-    msg_confirm_user_name=datetime.now().strftime("%Y-%m-%d %H:%M:%S")+ "|"+"User name " + user_name +" has been confirmed.\n"
-    msg_summary=msg_summary+msg_confirm_user_name  
-
-######## Switch to final confirmation page
-    driver.switch_to.window(driver.window_handles[-1])   
-    #### Click CONFIRM button
-    xpath_element_final_confirmation_button="//button[@id='app-next-button']"
-    # element_final_confirmation_button=driver.find_element(By.XPATH, xpath_element_final_confirmation_button)
-    element_final_confirmation_button=get_element_wait_for_load("XPATH",xpath_element_final_confirmation_button)      
-    # element_final_confirmation_button.click()    
-    driver.execute_script("arguments[0].click();", element_final_confirmation_button)  
-    
-######## Switch to the appoitment receipt(StartOver) page
-    driver.switch_to.window(driver.window_handles[-1])   
-    xpath_element_startover_button="//span[text()='Start Over']"     
-    # wait_for_load("XPATH", xpath_element_startover_button)      
-    if get_element_wait_for_load("XPATH", xpath_element_startover_button) != "None":    
-        #### No need to click StartOver, the appearance of this page means the appointment has been booked.
-        msg_confirm_booking =datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"|"+ str_appointment_time +" on "+court_name+" has been booked successfully.\n"
-        sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_appointment_time, court_number,"Succeeded")       
-        msg_summary=msg_summary+msg_confirm_booking+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log_process(log_path, msg_summary)
-        driver.quit()     
-        send_email(msg_summary, "Succeeded")
-    else:
-        raise ElementLocatorNotExists(xpath_element_startover_button)
-
+                msg_summary=msg_summary+attribute_target_date_hour+" is NOT available for court "+ str(court_number)+"\n"
+        if is_target_hour_available==False:
+            raise TimeNotAvailable()        
+            
+            
+        ######## Swith to Player page
+        driver.switch_to.window(driver.window_handles[0])        
+        ###### If Important Message Page appears, the emai has been overused
+        # <div class="modal-body">You have reached max number of courts allowed to reserve per day: 1</div>  
+        xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per day: 1')]"       
+        if get_element_wait_for_load("XPATH",xpath_element_important_message_page)!="None":
+            sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, "EmailOverused")
+            driver.quit()
+            raise EmailNotUsable()        
+        else: 
+            # <textarea autocomplete="off" class="required form-control" id="_0__Value" name="Udfs[0].Value"></textarea>          
+            xpath_element_textarea_resident_with_you="//textarea[@autocomplete='off'][@class='required form-control']"      
+            element_textarea_resident_with_you=get_element_wait_for_load("XPATH",xpath_element_textarea_resident_with_you)          
+            element_textarea_resident_with_you.send_keys("Jiajia Guo")     
+            time.sleep(1)      
+            # sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_appointment_time, court_number,"Succeeded")     
+            # Click SAVE button
+            # There are two SAVE buttons, one is on the top, the other is at the bottom. The only difference on the elements is the one on the top has no space in its class name, but the one at the bottom has. 
+            # Top:
+            # <div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
+            # <button type="button" class="btn btn-primary btn-submit" onclick="submitCreateReservationForm()">Save</button></div>
+            # Bottom:
+            # <div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
+            # <button type="button" class="btn btn-primary btn-submit " onclick="submitCreateReservationForm()">Save</button></div>            
+            xpath_element_bottom_save_button="//button[@type='button'][@class='btn btn-primary btn-submit ']"      
+            element_bottom_save_button=get_element_wait_for_load("XPATH",xpath_element_bottom_save_button)          
+            element_bottom_save_button.click()            
+            sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number,"Succeeded") 
+            
+            
+            ###### Switch to Close page        
+            driver.switch_to.window(driver.window_handles[0])        
+            # <button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
+            xpath_element_close_button="//button[@type='reset'][@data-dismiss='modal'][text()='Close']"      
+            element_close_button=get_element_wait_for_load("XPATH",xpath_element_close_button)          
+            element_close_button.click()
+            driver.quit()          
 
 except CourtOverbooked:
-    msg_summary=msg_summary+"Exception: " +court_name+" has been overbooked.\n"+ sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
+    msg_summary=msg_summary+"Exception: " +court_label+" has been overbooked.\n"+ sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
     log_process(log_path, msg_summary)    
     send_email(msg_summary, "Failed")   
