@@ -44,7 +44,7 @@ class TimeNotAvailable(Exception):
    pass
 
 def get_element_wait_for_load(element_type,element_expression):
-    wait=WebDriverWait(driver, 10)  
+    wait=WebDriverWait(driver, 1)  
     # element = driver.find_element(By.XPATH, element_expression);
     try:     
         if element_type=="XPATH":
@@ -184,14 +184,22 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
     dt_appt_time = datetime.strptime(appt_time, '%Y-%m-%d') 
     appt_week_start_date = str(dt_appt_time-timedelta(days=dt_appt_time.weekday()))  # Monday is the start date of a week
     #### check whether the email has been used more than 3 times in the booking week, it doesn't matter on which date or court.   
-    check_email_query=" select LoginEmail " \
+    check_email_query="/* Check whether email has been used once in a day */" \
+                     +" select LoginEmail " \
                      +" from Appointment  " \
-                     +" where AppointmentStatus='EmailOverused' and LoginEmail='"+email + "'" \
+                     +" where LoginEmail='"+email + "' and strftime('%Y-%m-%d', AppointmentTime)='"+ dt_appt_time.strftime("%Y-%m-%d")+"'" \
+                     +" union " \
+                     +"/* Check whether email status is ReachedWeeklyLimit3 */" \
+                     +" select LoginEmail " \
+                     +" from Appointment  " \
+                     +" where AppointmentStatus='ReachedWeeklyLimit3' and LoginEmail='"+email + "'" \
                      +" union "  \
+                     +"/* Check whether email has been used 3 times in a week */" \
                      +" select LoginEmail " \
                      +" from Appointment " \
                      +" where AppointmentStatus='Succeeded' and LoginEmail='"+email + "' and AppointmentTime>='" + appt_week_start_date +"'" \
                      +" group by LoginEmail having count(1)>=3 "
+                
     # check_email_query=check_email_query              
     cur.execute(check_email_query) 
     query_result=cur.fetchone()      
@@ -217,10 +225,10 @@ else:
     raise IndexError("The length of sys.argv should not be less than 2 or more than 3.")    
 
 
-#########>>>>>>>>>>>>> Testing <<<<<<<<<<<<<<<#######
+# #########>>>>>>>>>>>>> Testing <<<<<<<<<<<<<<<#######
 # court_number="3"
 # str_military_hour_option=""    
-# # str_military_hour_option = "[5,6]"    
+# # # str_military_hour_option = "[5,6]"    
 
 ##########################################################################################################
 ###### If enable_purge_record =True, Appointment table will be purged. This variable is set manually #####
@@ -268,8 +276,6 @@ create_table_script="""CREATE TABLE IF NOT EXISTS Appointment
                           AppointmentStatus    VARCHAR(50)
                        )
                  """
-# implicitly_wait_second=3
-sleep_second=1
 
 try:   
     ######## create a sqlite db and table to track the usage of login_email    
@@ -281,7 +287,7 @@ try:
         sqlite_purge_appointment(conn)
 
     ######## Test record 
-    ### sqlite_insert_appointment(conn, 111111, 'waynelxb@gmail.com', '2022-2-14', '2022-2-21', 3, 'EmailOverused') 
+    ### sqlite_insert_appointment(conn, 111111, 'waynelxb@gmail.com', '2022-2-14', '2022-2-21', 3, 'ReachedWeeklyLimit3') 
     ######## At the end of the while loop, if is_email_usable=False, another login_email will be used.    
     
     is_email_usable=False
@@ -299,9 +305,9 @@ try:
         if dt_login_time >= dt_court_release_time:
             dt_target_date=(now + timedelta(days=7)).date()
         else:
-            dt_target_date=(now + timedelta(days=6)).date()
-             
-        str_target_date=str(dt_target_date) 
+            dt_target_date=(now + timedelta(days=6)).date() 
+        
+        str_target_date=str(dt_target_date)     
         # xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='Friday, April 1, 2022']"                                                                                        
         attribute_target_date=dt_target_date.strftime("%A, %B %#d, %Y")   
         # print(attribute_target_date)        
@@ -345,8 +351,7 @@ try:
         msg_summary=msg_summary+"Login Email: "+login_email+"\n"
         msg_summary=msg_summary+"Court Name: " + court_label +"\n"
         msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"       
-        # print(msg_summary)            
-                  
+        # print(msg_summary)                             
 
 
         ####### Create chrome driver       
@@ -393,7 +398,7 @@ try:
         xpath_element_button_currentdate="//span[@data-bind='text: formattedShortDate'][text()='"+ attribute_current_date_short_date + "']"      
         element_button_currentdate=get_element_wait_for_load("XPATH",xpath_element_button_currentdate)          
         element_button_currentdate.click()          
-        time.sleep(2)  
+        time.sleep(1)  
         ### Click target date
         # <a tabindex="-1" class="k-link" href="#" data-value="2022/3/1" title="Friday, April 1, 2022">1</a> 
         xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='"+ attribute_target_date +"']"      
@@ -429,41 +434,48 @@ try:
             
         ######## Swith to Player page
         driver.switch_to.window(driver.window_handles[0])        
-        ###### If Important Message Page appears, the emai has been overused
-        # <div class="modal-body">You have reached max number of courts allowed to reserve per day: 1</div>  
+        ###### If Important Message Page appears, the emai has been overused in a day or week
+        # <div class="modal-body">You have reached max number of courts allowed to reserve per day: 1</div>             
         xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per day: 1')]"       
         if get_element_wait_for_load("XPATH",xpath_element_important_message_page)!="None":
-            sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, "EmailOverused")
+            sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, "ReachedDailyLimit1")
+            driver.quit()
+            raise EmailNotUsable()
+        #<div class="modal-body">You have reached max number of courts allowed to reserve per week: 3</div>
+        xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per week: 3')]"  
+        if get_element_wait_for_load("XPATH",xpath_element_important_message_page)!="None":
+            sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, "ReachedWeeklyLimit3")
             driver.quit()
             raise EmailNotUsable()        
-        else: 
-            # <textarea autocomplete="off" class="required form-control" id="_0__Value" name="Udfs[0].Value"></textarea>          
-            xpath_element_textarea_resident_with_you="//textarea[@autocomplete='off'][@class='required form-control']"      
-            element_textarea_resident_with_you=get_element_wait_for_load("XPATH",xpath_element_textarea_resident_with_you)          
-            element_textarea_resident_with_you.send_keys("Jiajia Guo")     
-            time.sleep(1)      
-            # sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_appointment_time, court_number,"Succeeded")     
-            # Click SAVE button
-            # There are two SAVE buttons, one is on the top, the other is at the bottom. The only difference on the elements is the one on the top has no space in its class name, but the one at the bottom has. 
-            # Top:
-            # <div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
-            # <button type="button" class="btn btn-primary btn-submit" onclick="submitCreateReservationForm()">Save</button></div>
-            # Bottom:
-            # <div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
-            # <button type="button" class="btn btn-primary btn-submit " onclick="submitCreateReservationForm()">Save</button></div>            
-            xpath_element_bottom_save_button="//button[@type='button'][@class='btn btn-primary btn-submit ']"      
-            element_bottom_save_button=get_element_wait_for_load("XPATH",xpath_element_bottom_save_button)          
-            element_bottom_save_button.click()            
-            sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number,"Succeeded") 
-            
-            
-            ###### Switch to Close page        
-            driver.switch_to.window(driver.window_handles[0])        
-            # <button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
-            xpath_element_close_button="//button[@type='reset'][@data-dismiss='modal'][text()='Close']"      
-            element_close_button=get_element_wait_for_load("XPATH",xpath_element_close_button)          
-            element_close_button.click()
-            driver.quit()          
+             
+
+        # <textarea autocomplete="off" class="required form-control" id="_0__Value" name="Udfs[0].Value"></textarea>          
+        xpath_element_textarea_resident_with_you="//textarea[@autocomplete='off'][@class='required form-control']"      
+        element_textarea_resident_with_you=get_element_wait_for_load("XPATH",xpath_element_textarea_resident_with_you)          
+        element_textarea_resident_with_you.send_keys("Jiajia Guo")     
+        time.sleep(1)      
+        # sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_appointment_time, court_number,"Succeeded")     
+        # Click SAVE button
+        # There are two SAVE buttons, one is on the top, the other is at the bottom. The only difference on the elements is the one on the top has no space in its class name, but the one at the bottom has. 
+        # Top:
+        # <div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
+        # <button type="button" class="btn btn-primary btn-submit" onclick="submitCreateReservationForm()">Save</button></div>
+        # Bottom:
+        # <div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
+        # <button type="button" class="btn btn-primary btn-submit " onclick="submitCreateReservationForm()">Save</button></div>            
+        xpath_element_bottom_save_button="//button[@type='button'][@class='btn btn-primary btn-submit ']"      
+        element_bottom_save_button=get_element_wait_for_load("XPATH",xpath_element_bottom_save_button)          
+        element_bottom_save_button.click()            
+        sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number,"Succeeded") 
+        
+        
+        ###### Switch to Close page        
+        driver.switch_to.window(driver.window_handles[0])        
+        # <button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
+        xpath_element_close_button="//button[@type='reset'][@data-dismiss='modal'][text()='Close']"      
+        element_close_button=get_element_wait_for_load("XPATH",xpath_element_close_button)          
+        element_close_button.click()
+        driver.quit()          
 
 except CourtOverbooked:
     msg_summary=msg_summary+"Exception: " +court_label+" has been overbooked.\n"+ sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
@@ -472,7 +484,7 @@ except CourtOverbooked:
     send_email(msg_summary, "Failed")   
 
 except EmailNotUsable:
-    msg_summary=msg_summary+"Exception: All the emails in "+str(list_email)+" have been overused!\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
+    msg_summary=msg_summary+"Exception: One or all the emails in "+str(list_email)+" have been overused for target date "+str_target_date+"!\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
     log_process(log_path, msg_summary)    
     send_email(msg_summary, "Failed")    
@@ -505,5 +517,3 @@ except:
     print(msg_summary)   
     log_process(log_path, msg_summary)
     send_email(msg_summary, "Failed")
-
-
