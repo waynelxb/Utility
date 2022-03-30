@@ -19,11 +19,6 @@ import sqlite3
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from cal_setup import get_calendar_service
-
-
-
-
 
 class CourtOverbooked(Exception):
    """Raised when cannot find the file"""
@@ -47,42 +42,6 @@ class CourtNumberNotExists(Exception):
 class TimeNotAvailable(Exception):
    """Raised when cannot find the file"""
    pass
-
-
-
-
-
-def create_calendar_event(event_date, event_hour, event_summary):
-   # creates one hour event tomorrow 10 AM IST
-   service = get_calendar_service()
-   event_datetime = datetime(event_date.year, event_date.month, event_date.day, event_hour)+timedelta(days=0)
-   start = event_datetime.isoformat()
-   end = (event_datetime + timedelta(hours=1)).isoformat()
-
-   event_result = service.events().insert(calendarId='primary'
-      ,body={
-               'summary': event_summary,
-               'description': 'Tennis Court',
-               'start': {"dateTime": start, 'timeZone': 'America/Chicago'},
-               'end': {"dateTime": end, 'timeZone': 'America/Chicago'},         
-               'reminders': {'useDefault': False,
-                             'overrides': [{'method': 'email', 'minutes': 24 * 60},
-                                           {'method': 'email', 'minutes': 8 * 60},
-                                           {'method': 'popup', 'minutes': 120},
-                                          ],
-                            }
-           }
-      ,sendUpdates='all'
-   ).execute()
-
-   print("created event")
-   print("id: ", event_result['id'])
-   print("summary: ", event_result['summary'])
-   print("starts at: ", event_result['start']['dateTime'])
-   print("ends at: ", event_result['end']['dateTime'])
-
-
-
 
 def get_element_wait_for_load(element_type,element_expression):
     wait=WebDriverWait(driver, 1)  
@@ -192,10 +151,10 @@ def sqlite_get_appointment(conn):
     return("Appointment Records:\n"+ str(query_result).replace("),", ")\n") ).replace("[","").replace("]","")+"\n"
 
 
-def sqlite_delete_old_appointment(conn, appt_date):    
+def sqlite_delete_old_appointment(conn, appt_time):    
     cur=conn.cursor()     
-    dt_appt_date = datetime.strptime(appt_date, '%Y-%m-%d') 
-    appt_week_start_date = str(dt_appt_date-timedelta(days=dt_appt_date.weekday()))  # Monday is the start date of a week        
+    dt_appt_time = datetime.strptime(appt_time, '%Y-%m-%d') 
+    appt_week_start_date = str(dt_appt_time-timedelta(days=dt_appt_time.weekday()))  # Monday is the start date of a week        
     ### delete old records which are not in the curent appointment week
     delete_query="delete from Appointment "+\
                   "where AppointmentTime <'" + appt_week_start_date+"'"
@@ -266,7 +225,7 @@ else:
     raise IndexError("The length of sys.argv should not be less than 2 or more than 3.")    
 
 
-#########>>>>>>>>>>>>> Testing <<<<<<<<<<<<<<<#######
+# #########>>>>>>>>>>>>> Testing <<<<<<<<<<<<<<<#######
 # court_number="3"
 # str_military_hour_option=""    
 # # # str_military_hour_option = "[5,6]"    
@@ -274,10 +233,10 @@ else:
 ##########################################################################################################
 ###### If enable_purge_record =True, Appointment table will be purged. This variable is set manually #####
 ##########################################################################################################
-enable_purge_record=True
+enable_purge_record=False
 
 
-###### login email list"liuxinbo.utube@gmail.com"
+###### login email list
 list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com"]
 ######## One password for all login emails     
 login_password="COUdl@1125"
@@ -362,7 +321,8 @@ try:
             if(dt_target_date.weekday()>=5):
                 list_military_hour_option=[14,15,16,17,18,10,11]
             else:
-                list_military_hour_option=[17,18,16,19,15]     
+                list_military_hour_option=[17,18,16,19,15]   
+                
         #### Delete the old records not in the current appoitment week  
         sqlite_delete_old_appointment(conn, str_target_date)
 
@@ -469,8 +429,8 @@ try:
             else: 
                 msg_summary=msg_summary+attribute_target_date_hour+" is NOT available for court "+ str(court_number)+"\n"
         if is_target_hour_available==False:
-            raise TimeNotAvailable()           
-        time.sleep(2)   
+            raise TimeNotAvailable()        
+            
             
         ######## Swith to Player page
         driver.switch_to.window(driver.window_handles[0])        
@@ -486,7 +446,7 @@ try:
         if get_element_wait_for_load("XPATH",xpath_element_important_message_page)!="None":
             sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, "ReachedWeeklyLimit3")
             driver.quit()
-            raise EmailNotUsable()       
+            raise EmailNotUsable()        
              
 
         # <textarea autocomplete="off" class="required form-control" id="_0__Value" name="Udfs[0].Value"></textarea>          
@@ -506,8 +466,8 @@ try:
         xpath_element_bottom_save_button="//button[@type='button'][@class='btn btn-primary btn-submit ']"      
         element_bottom_save_button=get_element_wait_for_load("XPATH",xpath_element_bottom_save_button)          
         element_bottom_save_button.click()            
-        sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number,"Succeeded")         
-        # time.sleep(2)        
+        sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number,"Succeeded") 
+        
         
         ###### Switch to Close page        
         driver.switch_to.window(driver.window_handles[0])        
@@ -515,27 +475,7 @@ try:
         xpath_element_close_button="//button[@type='reset'][@data-dismiss='modal'][text()='Close']"      
         element_close_button=get_element_wait_for_load("XPATH",xpath_element_close_button)          
         element_close_button.click()
-        time.sleep(2)        
-
-        # ###### Switch to Reservation page                 
-        WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
-        driver.switch_to.window(driver.window_handles[-1]) 
-        xpath_element_reserved_datetime_container="//div[@style='display:block;padding-top:2px;']/a[@class='btn-scheduler-edit-details']"   
-        element_reserved_datetime_container=get_element_wait_for_load("XPATH",xpath_element_reserved_datetime_container) 
-        print(element_reserved_datetime_container)         
-        element_reserved_datetime_container.click()        
-        time.sleep(2)      
-    
-        ###### Switch to Reservation Details page        
-        driver.switch_to.window(driver.window_handles[0])        
-        #<span class="title-part">5481#</span>
-        xpath_element_door_code="//span[@class='title-part'][contains(text(),'#')][not(contains(text(),'Court'))]" 
-        door_code=driver.find_element(By.XPATH, xpath_element_door_code).text        
-        # print(door_code)        
         driver.quit()          
-        
-        #### Create calendar event
-        create_calendar_event(dt_target_date, target_military_hour, "Court "+str(court_number)+" Code: "+ door_code )   
 
 except CourtOverbooked:
     msg_summary=msg_summary+"Exception: " +court_label+" has been overbooked.\n"+ sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
