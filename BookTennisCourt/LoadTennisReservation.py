@@ -52,9 +52,6 @@ def check_element_existence(element_type,element_expression):
         return True
     except:
         return False      
-        
-
-
 
 def send_email(subject, message):
     sender_email = 'waynelxb@gmail.com'
@@ -76,7 +73,6 @@ def send_email(subject, message):
     
 
 ############### DB Operation Functions ################################################
-
 def create_tennis_court_booking_db_connection(db_file):
     conn = sqlite3.connect(db_file)
     return conn
@@ -109,8 +105,7 @@ def sqlite_get_appointment(conn):
     cur.close()
     return("Appointment Records:\n"+ str(query_result).replace("),", ")\n") ).replace("[","").replace("]","")+"\n"
 
-
-
+######## Get Info from Reservation Table ##########
 class WebTable:
     def __init__(self, webtable):
        self.table = webtable
@@ -281,8 +276,8 @@ try:
                 reservered_court_number=re.findall(r'\d+', str_reserved_court)       
                 # print(reservered_court_number[0])                   
                 str_reserved_code=w.row_data(i)[6]
-                # print(str_reserved_code)                 
-                sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str(dt_reserved_datetime), reservered_court_number[0],str_reserved_code,"Succeeded")
+                # print(str_reserved_code)        
+                sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str(dt_reserved_datetime), reservered_court_number[0], "WeekDay: "+dt_reserved_datetime.strftime('%a')+" | Code: "+str_reserved_code,"Succeeded")
         driver.quit()          
         
     #print(sqlite_get_appointment(conn)) 

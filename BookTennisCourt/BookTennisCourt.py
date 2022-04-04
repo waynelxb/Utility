@@ -18,10 +18,7 @@ from email.mime.text import MIMEText
 import sqlite3
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
-from cal_setup import get_calendar_service
-
-
+from CreateCalendarEvent.cal_setup import get_calendar_service
 
 
 
@@ -50,38 +47,40 @@ class TimeNotAvailable(Exception):
 
 
 
-
-
 def create_calendar_event(event_date, event_hour, event_summary):
-   # creates one hour event tomorrow 10 AM IST
-   service = get_calendar_service()
-   event_datetime = datetime(event_date.year, event_date.month, event_date.day, event_hour)+timedelta(days=0)
-   start = event_datetime.isoformat()
-   end = (event_datetime + timedelta(hours=1)).isoformat()
-
-   event_result = service.events().insert(calendarId='primary'
-      ,body={
-               'summary': event_summary,
-               'description': 'Tennis Court',
-               'start': {"dateTime": start, 'timeZone': 'America/Chicago'},
-               'end': {"dateTime": end, 'timeZone': 'America/Chicago'},         
-               'reminders': {'useDefault': False,
-                             'overrides': [{'method': 'email', 'minutes': 24 * 60},
-                                           {'method': 'email', 'minutes': 8 * 60},
-                                           {'method': 'popup', 'minutes': 120},
-                                          ],
-                            }
-           }
-      ,sendUpdates='all'
-   ).execute()
-
-   print("created event")
-   print("id: ", event_result['id'])
-   print("summary: ", event_result['summary'])
-   print("starts at: ", event_result['start']['dateTime'])
-   print("ends at: ", event_result['end']['dateTime'])
-
-
+    try:
+       # creates one hour event tomorrow 10 AM IST
+       service = get_calendar_service()
+       event_datetime = datetime(event_date.year, event_date.month, event_date.day, event_hour)+timedelta(days=0)
+       start = event_datetime.isoformat()
+       end = (event_datetime + timedelta(hours=1)).isoformat()
+    
+       event_result = service.events().insert(calendarId='primary'
+          ,body={
+                   'summary': event_summary,
+                   'description': 'Tennis Court',
+                   'start': {"dateTime": start, 'timeZone': 'America/Chicago'},
+                   'end': {"dateTime": end, 'timeZone': 'America/Chicago'},         
+                   'reminders': {'useDefault': False,
+                                 'overrides': [{'method': 'email', 'minutes': 24 * 60},
+                                               {'method': 'email', 'minutes': 8 * 60},
+                                               {'method': 'popup', 'minutes': 120},
+                                              ],
+                                }
+               }
+          ,sendUpdates='all'
+       )
+       event_result.execute()
+       return("Calender Event: Succeeded in creating event.\n")
+       # print("created event")
+       # print("id: ", event_result['id'])
+       # print("summary: ", event_result['summary'])
+       # print("starts at: ", event_result['start']['dateTime'])
+       # print("ends at: ", event_result['end']['dateTime'])
+    except:
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        exceptMessage=repr(traceback.format_exception(exc_type, exc_value, exc_traceback))
+        return("Calender Event Error: "+exceptMessage +"\n")
 
 
 def get_element_wait_for_load(element_type,element_expression):
@@ -181,8 +180,6 @@ def sqlite_insert_appointment(conn, batch_id, login_email, login_time, appt_time
     conn.execute(insert_query)
     conn.commit()
 
-
-
 def sqlite_get_appointment(conn):    
     cur=conn.cursor()  
     ### get all appointment week records    
@@ -224,10 +221,8 @@ def sqlite_check_court_availability(conn, court_number, appt_time):
 def sqlite_check_email_usability(conn, email, appt_time, court_number):    
     cur=conn.cursor()     
     dt_appt_time = datetime.strptime(appt_time, '%Y-%m-%d') 
-    print(dt_appt_time)
     appt_week_start_date = str(dt_appt_time-timedelta(days=dt_appt_time.weekday()))  # Monday is the start date of a week
-    print(appt_week_start_date)
-    
+    # print(appt_week_start_date)    
     #### check whether the email has been used more than 3 times in the booking week, it doesn't matter on which date or court.   
     check_email_query="/* Check whether email has been used once in a day */" \
                      +" select LoginEmail " \
@@ -249,7 +244,7 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
     cur.execute(check_email_query) 
     query_result=cur.fetchone()      
     cur.close()    
-    print(check_email_query)
+    # print(check_email_query)
     # print("check_email_query result: "+ str(query_result))
     if str(query_result)=="None":
         return True
@@ -354,7 +349,7 @@ try:
         else:
             dt_target_date=(now + timedelta(days=6)).date() 
         
-        print(dt_target_date)
+
         str_target_date=str(dt_target_date)     
         # xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='Friday, April 1, 2022']"                                                                                        
         attribute_target_date=dt_target_date.strftime("%A, %B %#d, %Y")   
@@ -369,8 +364,7 @@ try:
             if(dt_target_date.weekday()>=5):
                 list_military_hour_option=[14,15,16,13,17,18,10,11]
             else:
-                list_military_hour_option=[17,18,16,19,15]     
-                
+                list_military_hour_option=[17,18,16,19,15]                   
         #### Delete the old records not in the current appoitment week  
         # sqlite_delete_old_appointment(conn, str_target_date)
 
@@ -409,10 +403,8 @@ try:
         options.add_argument('--ignore-certificate-errors')
         options.add_argument('--ignore-ssl-errors')
         options.add_experimental_option("excludeSwitches", ["enable-logging"])       
-        driver = webdriver.Chrome(service=svc, options=options)
-        
-        
-        # driver.implicitly_wait(3) ## seconds  
+        driver = webdriver.Chrome(service=svc, options=options)       
+        # driver.implicitly_wait(3) ## seconds 
         
         ######## Open Login page
         driver.get(login_url)        
@@ -479,6 +471,7 @@ try:
         if is_target_hour_available==False:
             raise TimeNotAvailable()           
         time.sleep(2)   
+        
             
         ######## Swith to Player page
         driver.switch_to.window(driver.window_handles[0])        
@@ -532,27 +525,24 @@ try:
         element_reserved_datetime_container=get_element_wait_for_load("XPATH",xpath_element_reserved_datetime_container) 
         # print(element_reserved_datetime_container)         
         element_reserved_datetime_container.click()        
-        time.sleep(3)      
+        time.sleep(2)      
     
         ###### Switch to Reservation Details page        
         driver.switch_to.window(driver.window_handles[0])        
         #<span class="title-part">5481#</span>
         xpath_element_door_code="//span[@class='title-part'][contains(text(),'#')][not(contains(text(),'Court'))]" 
         door_code=driver.find_element(By.XPATH, xpath_element_door_code).text        
-        sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number, door_code, "Succeeded")           
+        sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number,"WeekDay: "+dt_target_date.strftime('%a')+" | Code: "+door_code, "Succeeded")       
         # print(door_code)        
-        driver.quit()          
-        
-        #### Send success email
-        msg_summary=msg_summary+"Door Code:"+door_code+"\n"+"Reservations:"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"        
-        send_email("Tennis Court Booking Succeeded", msg_summary)               
+        driver.quit()                                
         
         #### Create calendar event
-        create_calendar_event(dt_target_date, target_military_hour, "Court "+str(court_number)+" Code: "+ door_code +" Login:"+ login_email.replace("@gmail.com","")) 
-    
+        calendar_event_status=create_calendar_event(dt_target_date, target_military_hour, "Court "+str(court_number)+" Code: "+ door_code +" Login:"+ login_email) 
         
-        
-        
+        #### Send success email
+        msg_summary=msg_summary+"Door Code:"+door_code+"\n"+"Reservations:"+sqlite_get_appointment(conn)+calendar_event_status+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"        
+        send_email("Tennis Court Booking Succeeded", msg_summary) 
+                   
 
 except CourtOverbooked:
     msg_summary=msg_summary+"Exception: " +court_label+" has been overbooked.\n"+ sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
