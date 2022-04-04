@@ -138,14 +138,14 @@ def log_process(file_path, message):
     direct_writing_file.close()
 
 
-def send_email(message, status):
+def send_email(subject, message):
     sender_email = 'waynelxb@gmail.com'
     sender_email_password='WAYdl@1125'
     receiver_email=sender_email
     server = 'smtp.gmail.com'
     port = 587
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = status+ ' in Booking Tennis Court'
+    msg["Subject"] = subject
     msg["From"] = sender_email
     msg["To"] = receiver_email
     msg.attach(MIMEText(message, 'plain'))    
@@ -174,13 +174,14 @@ def sqlite_purge_appointment(conn):
     conn.commit()                      
     cur.close()
 
-def sqlite_insert_appointment(conn, batch_id, login_email, login_time, appt_time, court_number, appt_status):
-    insert_query="INSERT INTO Appointment (BatchID, LoginEmail, LoginTime, AppointmentTime, CourtNumber, AppointmentStatus)"+\
-                 " VALUES("+str(batch_id)+ ",'"+login_email+"','"+login_time+ "','"+appt_time+"',"+str(court_number)+",'"+appt_status+"')"                    
+def sqlite_insert_appointment(conn, batch_id, login_email, login_time, appt_time, court_number, app_desc, appt_status):
+    insert_query="INSERT INTO Appointment (BatchID, LoginEmail, LoginTime, AppointmentTime, CourtNumber, Description, AppointmentStatus)"+\
+                 " VALUES("+str(batch_id)+ ",'"+login_email+"','"+login_time+ "','"+appt_time+"',"+str(court_number)+",'"+app_desc+"','"+appt_status+"')"                    
     # print(insert_query)             
     conn.execute(insert_query)
     conn.commit()
-   
+
+
 
 def sqlite_get_appointment(conn):    
     cur=conn.cursor()  
@@ -192,17 +193,17 @@ def sqlite_get_appointment(conn):
     return("Appointment Records:\n"+ str(query_result).replace("),", ")\n") ).replace("[","").replace("]","")+"\n"
 
 
-def sqlite_delete_old_appointment(conn, appt_date):    
-    cur=conn.cursor()     
-    dt_appt_date = datetime.strptime(appt_date, '%Y-%m-%d') 
-    appt_week_start_date = str(dt_appt_date-timedelta(days=dt_appt_date.weekday()))  # Monday is the start date of a week        
-    ### delete old records which are not in the curent appointment week
-    delete_query="delete from Appointment "+\
-                  "where AppointmentTime <'" + appt_week_start_date+"'"
-    # print(delete_query)
-    cur.execute(delete_query);   
-    conn.commit()           
-    cur.close()
+# def sqlite_delete_old_appointment(conn, appt_date):    
+#     cur=conn.cursor()     
+#     dt_appt_date = datetime.strptime(appt_date, '%Y-%m-%d') 
+#     appt_week_start_date = str(dt_appt_date-timedelta(days=dt_appt_date.weekday()))  # Monday is the start date of a week        
+#     ### delete old records which are not in the curent appointment week
+#     delete_query="delete from Appointment "+\
+#                   "where AppointmentTime <'" + appt_week_start_date+"'"
+#     print(delete_query)
+#     cur.execute(delete_query);   
+#     conn.commit()           
+#     cur.close()
 
 
 def sqlite_check_court_availability(conn, court_number, appt_time):    
@@ -223,7 +224,10 @@ def sqlite_check_court_availability(conn, court_number, appt_time):
 def sqlite_check_email_usability(conn, email, appt_time, court_number):    
     cur=conn.cursor()     
     dt_appt_time = datetime.strptime(appt_time, '%Y-%m-%d') 
+    print(dt_appt_time)
     appt_week_start_date = str(dt_appt_time-timedelta(days=dt_appt_time.weekday()))  # Monday is the start date of a week
+    print(appt_week_start_date)
+    
     #### check whether the email has been used more than 3 times in the booking week, it doesn't matter on which date or court.   
     check_email_query="/* Check whether email has been used once in a day */" \
                      +" select LoginEmail " \
@@ -233,7 +237,7 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
                      +"/* Check whether email status is ReachedWeeklyLimit3 */" \
                      +" select LoginEmail " \
                      +" from Appointment  " \
-                     +" where AppointmentStatus='ReachedWeeklyLimit3' and LoginEmail='"+email + "'" \
+                     +" where AppointmentStatus='ReachedWeeklyLimit3' and LoginEmail='"+email +"' and AppointmentTime>='" + appt_week_start_date +"'" \
                      +" union "  \
                      +"/* Check whether email has been used 3 times in a week */" \
                      +" select LoginEmail " \
@@ -245,7 +249,7 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
     cur.execute(check_email_query) 
     query_result=cur.fetchone()      
     cur.close()    
-    # print(check_email_query)
+    print(check_email_query)
     # print("check_email_query result: "+ str(query_result))
     if str(query_result)=="None":
         return True
@@ -273,11 +277,12 @@ else:
 
 ##########################################################################################################
 ###### If enable_purge_record =True, Appointment table will be purged. This variable is set manually #####
+###### Purge will be done by LoadTennisReservation.py in advance
 ##########################################################################################################
-enable_purge_record=True
+enable_purge_record=False
 
 
-###### login email list"liuxinbo.utube@gmail.com"
+###### login email list
 list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com"]
 ######## One password for all login emails     
 login_password="COUdl@1125"
@@ -314,6 +319,7 @@ create_table_script="""CREATE TABLE IF NOT EXISTS Appointment
                           LoginTime            TEXT,
                           AppointmentTime      TEXT,
                           CourtNumber          INT,
+                          Description          VARCHAR(50),
                           AppointmentStatus    VARCHAR(50)
                        )
                  """
@@ -328,7 +334,7 @@ try:
         sqlite_purge_appointment(conn)
 
     ######## Test record 
-    ### sqlite_insert_appointment(conn, 111111, 'waynelxb@gmail.com', '2022-2-14', '2022-2-21', 3, 'ReachedWeeklyLimit3') 
+    ### sqlite_insert_appointment(conn, 111111, 'waynelxb@gmail.com', '2022-2-14', '2022-2-21', 3,'', 'ReachedWeeklyLimit3') 
     ######## At the end of the while loop, if is_email_usable=False, another login_email will be used.    
     
     is_email_usable=False
@@ -348,6 +354,7 @@ try:
         else:
             dt_target_date=(now + timedelta(days=6)).date() 
         
+        print(dt_target_date)
         str_target_date=str(dt_target_date)     
         # xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='Friday, April 1, 2022']"                                                                                        
         attribute_target_date=dt_target_date.strftime("%A, %B %#d, %Y")   
@@ -360,11 +367,12 @@ try:
         else:
             #### use the default hour list    
             if(dt_target_date.weekday()>=5):
-                list_military_hour_option=[14,15,16,17,18,10,11]
+                list_military_hour_option=[14,15,16,13,17,18,10,11]
             else:
                 list_military_hour_option=[17,18,16,19,15]     
+                
         #### Delete the old records not in the current appoitment week  
-        sqlite_delete_old_appointment(conn, str_target_date)
+        # sqlite_delete_old_appointment(conn, str_target_date)
 
         #### Check whehter the court has been logged as overused  
         if sqlite_check_court_availability(conn, court_number, str_target_date)==False:
@@ -478,13 +486,13 @@ try:
         # <div class="modal-body">You have reached max number of courts allowed to reserve per day: 1</div>             
         xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per day: 1')]"       
         if get_element_wait_for_load("XPATH",xpath_element_important_message_page)!="None":
-            sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, "ReachedDailyLimit1")
+            sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, '', "ReachedDailyLimit1")
             driver.quit()
             raise EmailNotUsable()
         #<div class="modal-body">You have reached max number of courts allowed to reserve per week: 3</div>
         xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per week: 3')]"  
         if get_element_wait_for_load("XPATH",xpath_element_important_message_page)!="None":
-            sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, "ReachedWeeklyLimit3")
+            sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, '', "ReachedWeeklyLimit3")
             driver.quit()
             raise EmailNotUsable()       
              
@@ -506,7 +514,7 @@ try:
         xpath_element_bottom_save_button="//button[@type='button'][@class='btn btn-primary btn-submit ']"      
         element_bottom_save_button=get_element_wait_for_load("XPATH",xpath_element_bottom_save_button)          
         element_bottom_save_button.click()            
-        sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number,"Succeeded")         
+      
         # time.sleep(2)        
         
         ###### Switch to Close page        
@@ -515,59 +523,68 @@ try:
         xpath_element_close_button="//button[@type='reset'][@data-dismiss='modal'][text()='Close']"      
         element_close_button=get_element_wait_for_load("XPATH",xpath_element_close_button)          
         element_close_button.click()
-        time.sleep(2)        
+        time.sleep(3)        
 
         # ###### Switch to Reservation page                 
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
         driver.switch_to.window(driver.window_handles[-1]) 
         xpath_element_reserved_datetime_container="//div[@style='display:block;padding-top:2px;']/a[@class='btn-scheduler-edit-details']"   
         element_reserved_datetime_container=get_element_wait_for_load("XPATH",xpath_element_reserved_datetime_container) 
-        print(element_reserved_datetime_container)         
+        # print(element_reserved_datetime_container)         
         element_reserved_datetime_container.click()        
-        time.sleep(2)      
+        time.sleep(3)      
     
         ###### Switch to Reservation Details page        
         driver.switch_to.window(driver.window_handles[0])        
         #<span class="title-part">5481#</span>
         xpath_element_door_code="//span[@class='title-part'][contains(text(),'#')][not(contains(text(),'Court'))]" 
         door_code=driver.find_element(By.XPATH, xpath_element_door_code).text        
+        sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number, door_code, "Succeeded")           
         # print(door_code)        
         driver.quit()          
         
+        #### Send success email
+        msg_summary=msg_summary+"Door Code:"+door_code+"\n"+"Reservations:"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"        
+        send_email("Tennis Court Booking Succeeded", msg_summary)               
+        
         #### Create calendar event
-        create_calendar_event(dt_target_date, target_military_hour, "Court "+str(court_number)+" Code: "+ door_code )   
+        create_calendar_event(dt_target_date, target_military_hour, "Court "+str(court_number)+" Code: "+ door_code +" Login:"+ login_email.replace("@gmail.com","")) 
+    
+        
+        
+        
 
 except CourtOverbooked:
     msg_summary=msg_summary+"Exception: " +court_label+" has been overbooked.\n"+ sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
     log_process(log_path, msg_summary)    
-    send_email(msg_summary, "Failed")   
+    send_email("Tennis Court Booking Failed", msg_summary)   
 
 except EmailNotUsable:
     msg_summary=msg_summary+"Exception: One or all the emails in "+str(list_email)+" have been overused for target date "+str_target_date+"!\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
     log_process(log_path, msg_summary)    
-    send_email(msg_summary, "Failed")    
+    send_email("Tennis Court Booking Failed", msg_summary)    
     
 except ElementLocatorNotExists as e:
     driver.quit()
     msg_summary=msg_summary+"Error: "+ e.message +" cannot be loacated.\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
     log_process(log_path, msg_summary)    
-    send_email(msg_summary, "Failed")
+    send_email("Tennis Court Booking Failed", msg_summary)   
     
 except CourtNumberNotExists:
     msg_summary=msg_summary+"Error: Court "+ court_number + " doesn't exist.\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
     log_process(log_path, msg_summary)
-    send_email(msg_summary, "Failed")
+    send_email("Tennis Court Booking Failed", msg_summary)   
     
 except TimeNotAvailable:
     driver.quit()
     msg_summary=msg_summary+"Error: No time slot in "+ str(list_military_hour_option) + " is available.\n"+sqlite_get_appointment(conn) +"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
     log_process(log_path, msg_summary)
-    send_email(msg_summary, "Failed")   
+    send_email("Tennis Court Booking Failed", msg_summary)    
 
 except: 
     driver.quit()    
@@ -576,4 +593,4 @@ except:
     msg_summary=msg_summary+"Error: "+exceptMessage +"\n" +sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)   
     log_process(log_path, msg_summary)
-    send_email(msg_summary, "Failed")
+    send_email("Tennis Court Booking Failed", msg_summary)    
