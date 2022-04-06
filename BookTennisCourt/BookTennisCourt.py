@@ -80,7 +80,7 @@ def create_calendar_event(event_date, event_hour, event_summary):
     except:
         exc_type, exc_value, exc_traceback = sys.exc_info()
         exceptMessage=repr(traceback.format_exception(exc_type, exc_value, exc_traceback))
-        return("Calender Event Error: "+exceptMessage +"\n")
+        return("Calender Event: "+exceptMessage +"\n")
 
 
 def get_element_wait_for_load(element_type,element_expression):

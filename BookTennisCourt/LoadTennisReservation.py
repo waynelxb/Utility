@@ -24,7 +24,7 @@ import re
 
 
 def get_element_wait_for_load(element_type,element_expression):
-    wait=WebDriverWait(driver, 1)  
+    wait=WebDriverWait(driver, 2)  
     # element = driver.find_element(By.XPATH, element_expression);
     try:     
         if element_type=="XPATH":
@@ -257,7 +257,7 @@ try:
         
         ####### Open Reservation page to load existing reservations into the sqlite table
         driver.get("https://app.courtreserve.com/Online/MyProfile/MyReservations/7629?page=upcoming")    
-        time.sleep(3)          
+        time.sleep(5)          
         xpath_element_reservation_table="//table[@role='grid']"
         w = WebTable(get_element_wait_for_load("XPATH",xpath_element_reservation_table))            
         # print("First row data : ", w.row_data(0))          
@@ -280,7 +280,7 @@ try:
                 sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str(dt_reserved_datetime), reservered_court_number[0], "WeekDay: "+dt_reserved_datetime.strftime('%a')+" | Code: "+str_reserved_code,"Succeeded")
         driver.quit()          
         
-    #print(sqlite_get_appointment(conn)) 
+    print(sqlite_get_appointment(conn)) 
     #send_email("Tennis Court Reservation Load Succeeded", sqlite_get_appointment(conn))    
 except: 
     driver.quit()    
