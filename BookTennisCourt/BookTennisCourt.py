@@ -190,6 +190,24 @@ def sqlite_get_appointment(conn):
     return("Appointment Records:\n"+ str(query_result).replace("),", ")\n") ).replace("[","").replace("]","")+"\n"
 
 
+
+def sqlite_get_hour_reserved_on_target_date(conn, email, appt_time):    
+    cur=conn.cursor()     
+    dt_appt_time = datetime.strptime(appt_time, '%Y-%m-%d') 
+    
+    query_get_reserved_hour_on_target_date="/* get the reserved hour on the target date */" \
+                     +" select strftime('%H', AppointmentTime) " \
+                     +" from Appointment  " \
+                     +" where LoginEmail<>'"+email + "' and strftime('%Y-%m-%d', AppointmentTime)='"+ dt_appt_time.strftime("%Y-%m-%d")+"'"        
+    cur.execute(query_get_reserved_hour_on_target_date) 
+    query_result=cur.fetchone() 
+    # print(query_result)     
+    cur.close()    
+    if query_result==None:
+        return 0
+    else:
+        return(int(query_result[0]))
+
 # def sqlite_delete_old_appointment(conn, appt_date):    
 #     cur=conn.cursor()     
 #     dt_appt_date = datetime.strptime(appt_date, '%Y-%m-%d') 
@@ -228,13 +246,13 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
                      +" select LoginEmail " \
                      +" from Appointment  " \
                      +" where LoginEmail='"+email + "' and strftime('%Y-%m-%d', AppointmentTime)='"+ dt_appt_time.strftime("%Y-%m-%d")+"'" \
-                     +" union " \
+                     +" union "\
                      +"/* Check whether email status is ReachedWeeklyLimit3 */" \
                      +" select LoginEmail " \
                      +" from Appointment  " \
                      +" where AppointmentStatus='ReachedWeeklyLimit3' and LoginEmail='"+email +"' and AppointmentTime>='" + appt_week_start_date +"'" \
                      +" union "  \
-                     +"/* Check whether email has been used 3 times in a week */" \
+                     +"/* Check whether email has been used 3 times in a week*/" \
                      +" select LoginEmail " \
                      +" from Appointment " \
                      +" where AppointmentStatus='Succeeded' and LoginEmail='"+email + "' and AppointmentTime>='" + appt_week_start_date +"'" \
@@ -337,7 +355,7 @@ try:
         ##### Get login time         
         now=datetime.now()
         str_login_time=now.strftime("%Y-%m-%d %H:%M:%S") 
-        attribute_current_date_short_date=now.strftime("%#m/%#d/%Y")         
+        # attribute_current_date_short_date=now.strftime("%#m/%#d/%Y")         
         # print(attribute_current_date_short_date)       
 
         #### The courts on the date which is 7 days later than the current date are released at 12pm. 
@@ -352,8 +370,8 @@ try:
 
         str_target_date=str(dt_target_date)     
         # xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='Friday, April 1, 2022']"                                                                                        
-        attribute_target_date=dt_target_date.strftime("%A, %B %#d, %Y")   
-        # print(attribute_target_date)        
+        attribute_formatted_target_date=dt_target_date.strftime("%A, %B %#d, %Y")   
+        # print(attribute_formatted_target_date)        
 
         ####### If the length of str_military_hour_option is longer than 2, then conver it to a list, or use the default hour list   
         input_option_length=len(str_military_hour_option)        
@@ -362,9 +380,9 @@ try:
         else:
             #### use the default hour list    
             if(dt_target_date.weekday()>=5):
-                list_military_hour_option=[14,15,16,13,17,18,10,11]
+                list_military_hour_option=[15,16,17,18,13,14,10,11,12]
             else:
-                list_military_hour_option=[17,18,16,19,15]                   
+                list_military_hour_option=[17,18,16,19]                   
         #### Delete the old records not in the current appoitment week  
         # sqlite_delete_old_appointment(conn, str_target_date)
 
@@ -429,19 +447,22 @@ try:
         xpath_element_ArriveStreeterville="//li[@data-sm-show='true']/a[text()='Arrive Streeterville ']"      
         element_ArriveStreeterville=get_element_wait_for_load("XPATH",xpath_element_ArriveStreeterville)          
         element_ArriveStreeterville.click()   
-            
+
         
         ######## Switch to Schedule page       
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
-        driver.switch_to.window(driver.window_handles[-1])        
-        ### Click Current Date to get the drop-down menu
-        xpath_element_button_currentdate="//span[@data-bind='text: formattedShortDate'][text()='"+ attribute_current_date_short_date + "']"      
-        element_button_currentdate=get_element_wait_for_load("XPATH",xpath_element_button_currentdate)          
-        element_button_currentdate.click()          
+        driver.switch_to.window(driver.window_handles[-1])    
+        
+        #<span class="k-icon k-i-calendar">  
+        xpath_element_button_calendar="//span[@class='k-icon k-i-calendar']"        
+        element_button_calendar=get_element_wait_for_load("XPATH",xpath_element_button_calendar)          
+        element_button_calendar.click()
+ 
+        
         time.sleep(1)  
         ### Click target date
         # <a tabindex="-1" class="k-link" href="#" data-value="2022/3/1" title="Friday, April 1, 2022">1</a> 
-        xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='"+ attribute_target_date +"']"      
+        xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='"+ attribute_formatted_target_date +"']"      
         element_button_target_date=get_element_wait_for_load("XPATH",xpath_element_button_target_date)          
         element_button_target_date.click()   
         
@@ -449,29 +470,34 @@ try:
         ######## Switch to the target date page   
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
         driver.switch_to.window(driver.window_handles[-1])  
+        
+        ####### Get the hour has been reserved on the target date 
+        reserved_hour_on_target_date=sqlite_get_hour_reserved_on_target_date(conn, login_email, str_target_date)       
         ### Find and click available target hour
         is_target_hour_available=False 
-        for target_military_hour in list_military_hour_option:          
-            target_hour=("0"+str(target_military_hour))[-2:]+":00:00"            
-            attribute_target_date_hour=dt_target_date.strftime("%a %b %d %Y") +" "+ target_hour     
-            ### str_target_date_hour is used in database
-            str_target_date_hour=dt_target_date.strftime("%Y-%m-%d") +" "+ target_hour   
-            # print(str_target_date_hour)                       
-            # <button start="Fri Apr 01 2022 08:00:00 GMT-0500 (Central Daylight Time)" end="Fri Apr 01 2022 09:00:00 GMT-0500 (Central Daylight Time)" instructorid="undefined" courtlabel="Court #3 Arrive Residents Only" class="btn btn-default slot-btn m-auto">Reserve 8:00 AM</button>
-            xpath_element_button_target_date_court_time="//button[contains(@start, '"+attribute_target_date_hour +"')][@courtlabel='"+court_label+"'][@class='btn btn-default slot-btn m-auto']"         
-            # print(xpath_element_button_target_date_court_time)                       
-            if get_element_wait_for_load("XPATH", xpath_element_button_target_date_court_time) != "None":                
-                element_button_target_date_court_time=get_element_wait_for_load("XPATH",xpath_element_button_target_date_court_time)                 
-                element_button_target_date_court_time.click()                    
-                msg_summary=msg_summary+attribute_target_date_hour +" is available for court "+ str(court_number)+"\n"
-                is_target_hour_available=True
-                break
-            else: 
-                msg_summary=msg_summary+attribute_target_date_hour+" is NOT available for court "+ str(court_number)+"\n"
+        for target_military_hour in list_military_hour_option:   
+            ###### Try the hour which is not the same hour already reserved on the target date
+            if target_military_hour!=reserved_hour_on_target_date:
+                target_hour=("0"+str(target_military_hour))[-2:]+":00:00"            
+                attribute_formatted_target_date_hour=dt_target_date.strftime("%a %b %d %Y") +" "+ target_hour     
+                ### str_target_date_hour is used in database
+                str_target_date_hour=dt_target_date.strftime("%Y-%m-%d") +" "+ target_hour   
+                # print(str_target_date_hour)                       
+                # <button start="Fri Apr 01 2022 08:00:00 GMT-0500 (Central Daylight Time)" end="Fri Apr 01 2022 09:00:00 GMT-0500 (Central Daylight Time)" instructorid="undefined" courtlabel="Court #3 Arrive Residents Only" class="btn btn-default slot-btn m-auto">Reserve 8:00 AM</button>
+                xpath_element_button_target_date_court_time="//button[contains(@start, '"+attribute_formatted_target_date_hour +"')][@courtlabel='"+court_label+"'][@class='btn btn-default slot-btn m-auto']"         
+                # print(xpath_element_button_target_date_court_time)                       
+                if get_element_wait_for_load("XPATH", xpath_element_button_target_date_court_time) != "None":                
+                    element_button_target_date_court_time=get_element_wait_for_load("XPATH",xpath_element_button_target_date_court_time)                 
+                    element_button_target_date_court_time.click()   
+                    time.sleep(0.5)
+                    msg_summary=msg_summary+attribute_formatted_target_date_hour +" is available for court "+ str(court_number)+"\n"
+                    is_target_hour_available=True
+                    break
+                else: 
+                    msg_summary=msg_summary+attribute_formatted_target_date_hour+" is NOT available for court "+ str(court_number)+"\n"           
+                
         if is_target_hour_available==False:
-            raise TimeNotAvailable()           
-        time.sleep(2)   
-        
+            raise TimeNotAvailable()                   
             
         ######## Swith to Player page
         driver.switch_to.window(driver.window_handles[0])        
@@ -494,7 +520,7 @@ try:
         xpath_element_textarea_resident_with_you="//textarea[@autocomplete='off'][@class='required form-control']"      
         element_textarea_resident_with_you=get_element_wait_for_load("XPATH",xpath_element_textarea_resident_with_you)          
         element_textarea_resident_with_you.send_keys("Jiajia Guo")     
-        time.sleep(1)      
+        time.sleep(0.5)      
         # sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_appointment_time, court_number,"Succeeded")     
         # Click SAVE button
         # There are two SAVE buttons, one is on the top, the other is at the bottom. The only difference on the elements is the one on the top has no space in its class name, but the one at the bottom has. 
@@ -525,7 +551,7 @@ try:
         element_reserved_datetime_container=get_element_wait_for_load("XPATH",xpath_element_reserved_datetime_container) 
         # print(element_reserved_datetime_container)         
         element_reserved_datetime_container.click()        
-        time.sleep(2)      
+        time.sleep(3)      
     
         ###### Switch to Reservation Details page        
         driver.switch_to.window(driver.window_handles[0])        
