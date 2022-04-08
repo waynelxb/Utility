@@ -241,20 +241,25 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
     # print(appt_week_start_date)    
     #### check whether the email has been used more than 3 times in the booking week, it doesn't matter on which date or court.   
     check_email_query="/* Check whether email has been used once in a day */" \
-                     +" select LoginEmail " \
-                     +" from Appointment  " \
-                     +" where LoginEmail='"+email + "' and strftime('%Y-%m-%d', AppointmentTime)='"+ dt_appt_time.strftime("%Y-%m-%d")+"'" \
-                     +" union "\
-                     +"/* Check whether email status is ReachedWeeklyLimit3 */" \
-                     +" select LoginEmail " \
-                     +" from Appointment  " \
-                     +" where AppointmentStatus='ReachedWeeklyLimit3' and LoginEmail='"+email +"' and AppointmentTime>='" + appt_week_start_date +"'" \
-                     +" union "  \
-                     +"/* Check whether email has been used 3 times in a week*/" \
-                     +" select LoginEmail " \
-                     +" from Appointment " \
-                     +" where AppointmentStatus='Succeeded' and LoginEmail='"+email + "' and AppointmentTime>='" + appt_week_start_date +"'" \
-                     +" group by LoginEmail having count(1)>=3 "
+                    +" select LoginEmail " \
+                    +" from Appointment  " \
+                    +" where LoginEmail='"+email + "' and strftime('%Y-%m-%d', AppointmentTime)='"+ dt_appt_time.strftime("%Y-%m-%d")+"'" \
+                    +" union "\
+                    +"/* Check whether email status is ReachedDailyLimit1 */" \
+                    +" select LoginEmail " \
+                    +" from Appointment  " \
+                    +" where AppointmentStatus='ReachedDailyLimit1' and LoginEmail='"+email +"' and strftime('%Y-%m-%d', AppointmentTime)='"+ dt_appt_time.strftime("%Y-%m-%d")+"'" \
+                    +" union "\
+                    +"/* Check whether email status is ReachedWeeklyLimit3 */" \
+                    +" select LoginEmail " \
+                    +" from Appointment  " \
+                    +" where AppointmentStatus='ReachedWeeklyLimit3' and LoginEmail='"+email +"' and AppointmentTime>='" + appt_week_start_date +"'" \
+                    +" union "  \
+                    +"/* Check whether email has been used 3 times in a week*/" \
+                    +" select LoginEmail " \
+                    +" from Appointment " \
+                    +" where AppointmentStatus='Succeeded' and LoginEmail='"+email + "' and AppointmentTime>='" + appt_week_start_date +"'" \
+                    +" group by LoginEmail having count(1)>=3 "
                 
     # check_email_query=check_email_query              
     cur.execute(check_email_query) 
@@ -290,7 +295,7 @@ else:
 ###### If enable_purge_record =True, Appointment table will be purged. This variable is set manually #####
 ###### Purge will be done by LoadTennisReservation.py in advance
 ##########################################################################################################
-enable_purge_record=True
+enable_purge_record=False
 
 
 ###### login email list
@@ -360,12 +365,15 @@ try:
         #### The courts on the date which is 7 days later than the current date are released at 12pm. 
         str_court_release_time=now.strftime("%Y-%m-%d")+" "+"12:00:00"
         dt_login_time=datetime.strptime(str_login_time, "%Y-%m-%d %H:%M:%S")
-        dt_court_release_time=datetime.strptime(str_court_release_time, "%Y-%m-%d %H:%M:%S")
-        if dt_login_time >= dt_court_release_time:
-            dt_target_date=(now + timedelta(days=7)).date()
-        else:
-            dt_target_date=(now + timedelta(days=6)).date() 
+        dt_court_release_time=datetime.strptime(str_court_release_time, "%Y-%m-%d %H:%M:%S")         
         
+        # if dt_login_time >= dt_court_release_time:
+        #     dt_target_date=(now + timedelta(days=7)).date()
+        # else:
+        #     dt_target_date=(now + timedelta(days=6)).date() 
+        
+        ###### only target the date 7 days later
+        dt_target_date=(now + timedelta(days=7)).date()        
 
         str_target_date=str(dt_target_date)     
         # xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='Friday, April 1, 2022']"                                                                                        
@@ -408,6 +416,7 @@ try:
         msg_summary=msg_summary+"Login Time: "+str_login_time + "\n"   
         msg_summary=msg_summary+"Login Email: "+login_email+"\n"
         msg_summary=msg_summary+"Court Name: " + court_label +"\n"
+        msg_summary=msg_summary+"Target Date: " + str_target_date +"\n"        
         msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"       
         # print(msg_summary)          
 
@@ -490,7 +499,7 @@ try:
                 if get_element_wait_for_load("XPATH", xpath_element_button_target_date_court_time) != "None":                
                     element_button_target_date_court_time=get_element_wait_for_load("XPATH",xpath_element_button_target_date_court_time)                 
                     element_button_target_date_court_time.click()   
-                    time.sleep(0.5)
+                    time.sleep(0.2)
                     msg_summary=msg_summary+attribute_formatted_target_date_hour +" is available for court "+ str(court_number)+"\n"
                     is_target_hour_available=True
                     break
@@ -514,28 +523,22 @@ try:
         if get_element_wait_for_load("XPATH",xpath_element_important_message_page)!="None":
             sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, '', "ReachedWeeklyLimit3")
             driver.quit()
-            raise EmailNotUsable()       
-             
-
+            raise EmailNotUsable()              
+        time.sleep(0.2) 
+        
         # <textarea autocomplete="off" class="required form-control" id="_0__Value" name="Udfs[0].Value"></textarea>          
         xpath_element_textarea_resident_with_you="//textarea[@autocomplete='off'][@class='required form-control']"      
         element_textarea_resident_with_you=get_element_wait_for_load("XPATH",xpath_element_textarea_resident_with_you)          
         element_textarea_resident_with_you.send_keys("Jiajia Guo")     
-        time.sleep(0.5)      
-        # sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_appointment_time, court_number,"Succeeded")     
-        # Click SAVE button
-        # There are two SAVE buttons, one is on the top, the other is at the bottom. The only difference on the elements is the one on the top has no space in its class name, but the one at the bottom has. 
-        # Top:
-        # <div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
-        # <button type="button" class="btn btn-primary btn-submit" onclick="submitCreateReservationForm()">Save</button></div>
-        # Bottom:
-        # <div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
-        # <button type="button" class="btn btn-primary btn-submit " onclick="submitCreateReservationForm()">Save</button></div>            
-        xpath_element_bottom_save_button="//button[@type='button'][@class='btn btn-primary btn-submit ']"      
+        time.sleep(0.2)      
+
+        ###### Click the footer SAVE button        
+        # <div class="modal-footer-container"><div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary btn-submit " onclick="submitCreateReservationForm()">Save</button></div></div>
+        xpath_element_bottom_save_button="//div[@class='modal-footer-container']//button[@type='button'][text()='Save']"          
+        # xpath_element_bottom_save_button="//button[@type='button'][@class='btn btn-primary btn-submit ']"      
         element_bottom_save_button=get_element_wait_for_load("XPATH",xpath_element_bottom_save_button)          
-        element_bottom_save_button.click()            
-      
-        # time.sleep(2)        
+        element_bottom_save_button.click()             
+        time.sleep(0.2)
         
         ###### Switch to Close page        
         driver.switch_to.window(driver.window_handles[0])        
