@@ -189,8 +189,6 @@ def sqlite_get_appointment(conn):
     cur.close()
     return("Appointment Records:\n"+ str(query_result).replace("),", ")\n") ).replace("[","").replace("]","")+"\n"
 
-
-
 def sqlite_get_hour_reserved_on_target_date(conn, email, appt_time):    
     cur=conn.cursor()     
     dt_appt_time = datetime.strptime(appt_time, '%Y-%m-%d') 
@@ -292,7 +290,7 @@ else:
 ###### If enable_purge_record =True, Appointment table will be purged. This variable is set manually #####
 ###### Purge will be done by LoadTennisReservation.py in advance
 ##########################################################################################################
-enable_purge_record=False
+enable_purge_record=True
 
 
 ###### login email list
@@ -339,6 +337,7 @@ create_table_script="""CREATE TABLE IF NOT EXISTS Appointment
 
 try:   
     ######## create a sqlite db and table to track the usage of login_email    
+    
     conn = create_tennis_court_booking_db_connection(db_file_path)
     create_appointment_table(conn, create_table_script)   
     
@@ -404,14 +403,13 @@ try:
                 break   
         #### all emails are overused
         if is_email_usable==False:
-            raise EmailNotUsable()    
-            
+            raise EmailNotUsable()                
 
         msg_summary=msg_summary+"Login Time: "+str_login_time + "\n"   
         msg_summary=msg_summary+"Login Email: "+login_email+"\n"
         msg_summary=msg_summary+"Court Name: " + court_label +"\n"
         msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"       
-        # print(msg_summary)                             
+        # print(msg_summary)          
 
 
         ####### Create chrome driver       
@@ -438,8 +436,11 @@ try:
         xpath_element_password_submit_button="//button[@class='btn btn-log btn-block btn-thm btn-submit']"
         element_password_submit_button=get_element_wait_for_load("XPATH",xpath_element_password_submit_button) 
         element_password_submit_button.click()        
+              
+        ####### wait until 12:00:00, then proceed
+        while datetime.now()<dt_court_release_time:  
+            time.sleep(1)
         
-
         ######## Switch to Announcements page        
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
         driver.switch_to.window(driver.window_handles[-1])
