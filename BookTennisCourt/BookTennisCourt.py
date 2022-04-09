@@ -83,8 +83,8 @@ def create_calendar_event(event_date, event_hour, event_summary):
         return("Calender Event: "+exceptMessage +"\n")
 
 
-def get_element_wait_for_load(element_type,element_expression):
-    wait=WebDriverWait(driver, 1)  
+def get_element_wait_for_load(wait_seconds,element_type,element_expression):
+    wait=WebDriverWait(driver, wait_seconds)  
     # element = driver.find_element(By.XPATH, element_expression);
     try:     
         if element_type=="XPATH":
@@ -378,7 +378,10 @@ try:
         str_target_date=str(dt_target_date)     
         # xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='Friday, April 1, 2022']"                                                                                        
         attribute_formatted_target_date=dt_target_date.strftime("%A, %B %#d, %Y")   
-        # print(attribute_formatted_target_date)        
+        # print(attribute_formatted_target_date)     
+        str_target_day_of_month=dt_target_date.strftime("%#d")        
+        # print(str_target_day_of_month)       
+   
 
         ####### If the length of str_military_hour_option is longer than 2, then conver it to a list, or use the default hour list   
         input_option_length=len(str_military_hour_option)        
@@ -435,27 +438,30 @@ try:
         driver.get(login_url)        
         #### input email       
         id_element_email_inputbox="UserNameOrEmail" 
-        element_email_inputbox=get_element_wait_for_load("ID",id_element_email_inputbox)      
+        element_email_inputbox=get_element_wait_for_load(1,"ID",id_element_email_inputbox)      
         element_email_inputbox.send_keys(login_email)      
         #### Input password 
         id_element_password_inputbox="Password"        
-        element_password_inputbox=get_element_wait_for_load("ID",id_element_password_inputbox)         
+        element_password_inputbox=get_element_wait_for_load(1,"ID",id_element_password_inputbox)         
         element_password_inputbox.send_keys(login_password)     
         ### Click button               
         xpath_element_password_submit_button="//button[@class='btn btn-log btn-block btn-thm btn-submit']"
-        element_password_submit_button=get_element_wait_for_load("XPATH",xpath_element_password_submit_button) 
+        element_password_submit_button=get_element_wait_for_load(1,"XPATH",xpath_element_password_submit_button) 
         element_password_submit_button.click()        
               
         ####### wait until 12:00:00, then proceed
         while datetime.now()<dt_court_release_time:  
             time.sleep(1)
+            
+        
+        msg_summary=msg_summary+"Booking Start Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
         
         ######## Switch to Announcements page        
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
         driver.switch_to.window(driver.window_handles[-1])
         #### Click Arrive Streeterville
         xpath_element_ArriveStreeterville="//li[@data-sm-show='true']/a[text()='Arrive Streeterville ']"      
-        element_ArriveStreeterville=get_element_wait_for_load("XPATH",xpath_element_ArriveStreeterville)          
+        element_ArriveStreeterville=get_element_wait_for_load(1,"XPATH",xpath_element_ArriveStreeterville)          
         element_ArriveStreeterville.click()   
 
         
@@ -465,21 +471,24 @@ try:
         
         #<span class="k-icon k-i-calendar">  
         xpath_element_button_calendar="//span[@class='k-icon k-i-calendar']"        
-        element_button_calendar=get_element_wait_for_load("XPATH",xpath_element_button_calendar)          
+        element_button_calendar=get_element_wait_for_load(1,"XPATH",xpath_element_button_calendar)          
         element_button_calendar.click()
  
         
         time.sleep(1)  
         ### Click target date
         # <a tabindex="-1" class="k-link" href="#" data-value="2022/3/1" title="Friday, April 1, 2022">1</a> 
-        xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='"+ attribute_formatted_target_date +"']"      
-        element_button_target_date=get_element_wait_for_load("XPATH",xpath_element_button_target_date)          
+        # xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='"+ attribute_formatted_target_date +"']"      
+        xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][text()='"+ str_target_day_of_month +"']"  
+        element_button_target_date=get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date)          
         element_button_target_date.click()   
         
         
         ######## Switch to the target date page   
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
         driver.switch_to.window(driver.window_handles[-1])  
+        
+        msg_summary=msg_summary+"Check Hour Start Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
         
         ####### Get the hour has been reserved on the target date 
         reserved_hour_on_target_date=sqlite_get_hour_reserved_on_target_date(conn, login_email, str_target_date)       
@@ -496,8 +505,8 @@ try:
                 # <button start="Fri Apr 01 2022 08:00:00 GMT-0500 (Central Daylight Time)" end="Fri Apr 01 2022 09:00:00 GMT-0500 (Central Daylight Time)" instructorid="undefined" courtlabel="Court #3 Arrive Residents Only" class="btn btn-default slot-btn m-auto">Reserve 8:00 AM</button>
                 xpath_element_button_target_date_court_time="//button[contains(@start, '"+attribute_formatted_target_date_hour +"')][@courtlabel='"+court_label+"'][@class='btn btn-default slot-btn m-auto']"         
                 # print(xpath_element_button_target_date_court_time)                       
-                if get_element_wait_for_load("XPATH", xpath_element_button_target_date_court_time) != "None":                
-                    element_button_target_date_court_time=get_element_wait_for_load("XPATH",xpath_element_button_target_date_court_time)                 
+                if get_element_wait_for_load(0.5,"XPATH", xpath_element_button_target_date_court_time) != "None":                
+                    element_button_target_date_court_time=get_element_wait_for_load(0.5,"XPATH",xpath_element_button_target_date_court_time)                 
                     element_button_target_date_court_time.click()   
                     time.sleep(0.2)
                     msg_summary=msg_summary+attribute_formatted_target_date_hour +" is available for court "+ str(court_number)+"\n"
@@ -508,19 +517,21 @@ try:
                 
         if is_target_hour_available==False:
             raise TimeNotAvailable()                   
-            
+         
+        msg_summary=msg_summary+"Check Hour End Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
+        
         ######## Swith to Player page
         driver.switch_to.window(driver.window_handles[0])        
         ###### If Important Message Page appears, the emai has been overused in a day or week
         # <div class="modal-body">You have reached max number of courts allowed to reserve per day: 1</div>             
         xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per day: 1')]"       
-        if get_element_wait_for_load("XPATH",xpath_element_important_message_page)!="None":
+        if get_element_wait_for_load(1,"XPATH",xpath_element_important_message_page)!="None":
             sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, '', "ReachedDailyLimit1")
             driver.quit()
             raise EmailNotUsable()
         #<div class="modal-body">You have reached max number of courts allowed to reserve per week: 3</div>
         xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per week: 3')]"  
-        if get_element_wait_for_load("XPATH",xpath_element_important_message_page)!="None":
+        if get_element_wait_for_load(1,"XPATH",xpath_element_important_message_page)!="None":
             sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, '', "ReachedWeeklyLimit3")
             driver.quit()
             raise EmailNotUsable()              
@@ -528,7 +539,7 @@ try:
         
         # <textarea autocomplete="off" class="required form-control" id="_0__Value" name="Udfs[0].Value"></textarea>          
         xpath_element_textarea_resident_with_you="//textarea[@autocomplete='off'][@class='required form-control']"      
-        element_textarea_resident_with_you=get_element_wait_for_load("XPATH",xpath_element_textarea_resident_with_you)          
+        element_textarea_resident_with_you=get_element_wait_for_load(1,"XPATH",xpath_element_textarea_resident_with_you)          
         element_textarea_resident_with_you.send_keys("Jiajia Guo")     
         time.sleep(0.2)      
 
@@ -536,15 +547,17 @@ try:
         # <div class="modal-footer-container"><div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary btn-submit " onclick="submitCreateReservationForm()">Save</button></div></div>
         xpath_element_bottom_save_button="//div[@class='modal-footer-container']//button[@type='button'][text()='Save']"          
         # xpath_element_bottom_save_button="//button[@type='button'][@class='btn btn-primary btn-submit ']"      
-        element_bottom_save_button=get_element_wait_for_load("XPATH",xpath_element_bottom_save_button)          
+        element_bottom_save_button=get_element_wait_for_load(1,"XPATH",xpath_element_bottom_save_button)          
         element_bottom_save_button.click()             
         time.sleep(0.2)
+        
+        msg_summary=msg_summary+"Booking End Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
         
         ###### Switch to Close page        
         driver.switch_to.window(driver.window_handles[0])        
         # <button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
         xpath_element_close_button="//button[@type='reset'][@data-dismiss='modal'][text()='Close']"      
-        element_close_button=get_element_wait_for_load("XPATH",xpath_element_close_button)          
+        element_close_button=get_element_wait_for_load(1,"XPATH",xpath_element_close_button)          
         element_close_button.click()
         time.sleep(3)        
 
@@ -552,7 +565,7 @@ try:
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
         driver.switch_to.window(driver.window_handles[-1]) 
         xpath_element_reserved_datetime_container="//div[@style='display:block;padding-top:2px;']/a[@class='btn-scheduler-edit-details']"   
-        element_reserved_datetime_container=get_element_wait_for_load("XPATH",xpath_element_reserved_datetime_container) 
+        element_reserved_datetime_container=get_element_wait_for_load(1,"XPATH",xpath_element_reserved_datetime_container) 
         # print(element_reserved_datetime_container)         
         element_reserved_datetime_container.click()        
         time.sleep(3)      

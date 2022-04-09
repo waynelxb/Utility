@@ -23,8 +23,8 @@ import re
 
 
 
-def get_element_wait_for_load(element_type,element_expression):
-    wait=WebDriverWait(driver, 2)  
+def get_element_wait_for_load(wait_seconds,element_type,element_expression):
+    wait=WebDriverWait(driver, wait_seconds)  
     # element = driver.find_element(By.XPATH, element_expression);
     try:     
         if element_type=="XPATH":
@@ -243,15 +243,15 @@ try:
         driver.get(login_url)        
         #### input email       
         id_element_email_inputbox="UserNameOrEmail" 
-        element_email_inputbox=get_element_wait_for_load("ID",id_element_email_inputbox)      
+        element_email_inputbox=get_element_wait_for_load(1,"ID",id_element_email_inputbox)      
         element_email_inputbox.send_keys(login_email)      
         #### Input password 
         id_element_password_inputbox="Password"        
-        element_password_inputbox=get_element_wait_for_load("ID",id_element_password_inputbox)         
+        element_password_inputbox=get_element_wait_for_load(1,"ID",id_element_password_inputbox)         
         element_password_inputbox.send_keys(login_password)     
         ### Click button               
         xpath_element_password_submit_button="//button[@class='btn btn-log btn-block btn-thm btn-submit']"
-        element_password_submit_button=get_element_wait_for_load("XPATH",xpath_element_password_submit_button) 
+        element_password_submit_button=get_element_wait_for_load(1,"XPATH",xpath_element_password_submit_button) 
         element_password_submit_button.click()    
         
         
@@ -259,7 +259,7 @@ try:
         driver.get("https://app.courtreserve.com/Online/MyProfile/MyReservations/7629?page=upcoming")    
         time.sleep(5)          
         xpath_element_reservation_table="//table[@role='grid']"
-        w = WebTable(get_element_wait_for_load("XPATH",xpath_element_reservation_table))            
+        w = WebTable(get_element_wait_for_load(5,"XPATH",xpath_element_reservation_table))            
         # print("First row data : ", w.row_data(0))          
         for i in range(5):
             if len(w.row_data(i))>0:    
