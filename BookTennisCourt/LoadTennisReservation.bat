@@ -3,4 +3,4 @@
 :: and both pathes are listed in environment variable PATH. 
 :: python C:\Projects\GitHub\UtilityRepository\BookTennisCourt\BookTennisCourt.py %court_number% %list_appointment_military_hour%
 
-C:\ProgramData\Anaconda3\python.exe "D:\Projects\GitHub\UtilityRepository\BookTennisCourt\LoadTennisReservation.py"
+C:\ProgramData\Anaconda3\python.exe "C:\Users\Me\Projects\GitHub\Utility\BookTennisCourt\LoadTennisReservation.py"

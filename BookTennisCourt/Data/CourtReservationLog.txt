@@ -4456,3 +4456,21 @@ Appointment Records:
  (20220410091729, 'liuxinbo.utube@gmail.com', '2022-04-10 09:17:43', '2022-04-14 17:00:00', 2, 'WeekDay: Thu | Code: 2108#', 'Succeeded')
 Logout Time: 2022-04-10 09:32:43
 
+
+
+BatchID: 20220410093938
+Login Time: 2022-04-10 09:39:38
+Login Email: liuxinbo.utube@gmail.com
+Court Name: Court #3 Arrive Residents Only
+Target Date: 2022-04-17
+Expected Hour List: [15, 16, 17, 18, 13, 14, 10, 11, 12]
+Booking Start Time: 2022-04-10 09:39:44
+Error: xpath_element_button_target_date=//a[@tabindex='-1'][@class='k-link'][text()='17'] cannot be loacated.
+Appointment Records:
+(20220410093840, 'xinbo.liu@gmail.com', '2022-04-10 09:38:41', '2022-04-11 17:00:00', 3, 'WeekDay: Mon | Code: 8724#', 'Succeeded')
+ (20220410093840, 'xinbo.liu@gmail.com', '2022-04-10 09:38:41', '2022-04-13 16:00:00', 3, 'WeekDay: Wed | Code: 1644#', 'Succeeded')
+ (20220410093840, 'xinbo.liu@gmail.com', '2022-04-10 09:38:41', '2022-04-14 16:00:00', 2, 'WeekDay: Thu | Code: 1394#', 'Succeeded')
+ (20220410093840, 'liuxinbo.utube@gmail.com', '2022-04-10 09:38:56', '2022-04-10 14:00:00', 3, 'WeekDay: Sun | Code: 1842#', 'Succeeded')
+ (20220410093840, 'liuxinbo.utube@gmail.com', '2022-04-10 09:38:56', '2022-04-14 17:00:00', 2, 'WeekDay: Thu | Code: 2108#', 'Succeeded')
+Logout Time: 2022-04-10 09:39:49
+
