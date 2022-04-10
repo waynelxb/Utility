@@ -193,11 +193,12 @@ msg_summary="\n\n"+"BatchID: "+str(batch_id) + "\n"
       
 #################### Static Input Parameter: Program Configuration ##########################
 ##### Log file and db file are put in Data folder
-# log_path="D:/Projects/GitHub/BookTennisCourtData/BookTennisCourtLog.txt"    
-db_file_path="D:/Projects/GitHub/BookTennisCourtData/TennisCourtBooking.db"
+db_file_path=r"C:\Users\Me\Projects\GitHub\Utility\BookTennisCourt\Data\CourtReservation.db"
 
 ##### Chrome driver is put in project code folder
-chrome_driver_path = "D:/Projects/GitHub/UtilityRepository/BookTennisCourt/chromedriver.exe"   
+chrome_driver_path = r"C:\Users\Me\Projects\GitHub\Utility\BookTennisCourt\chromedriver.exe" 
+
+
 
 profile_directory=r"–user-data-dir=C:\Users\Me\AppData\Local\Google\Chrome\User Data"
 login_url="https://app.courtreserve.com/Online/Account/LogIn/7629"
