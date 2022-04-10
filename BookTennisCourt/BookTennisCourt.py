@@ -6,12 +6,12 @@ import os
 import time
 import sys
 import traceback
-from datetime import datetime  
-from datetime import timedelta  
+from datetime import datetime
+from datetime import timedelta
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 # from selenium.common.exceptions import NoSuchElementException 
-from selenium.webdriver.common.by import By  
+from selenium.webdriver.common.by import By
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -272,7 +272,6 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
     else:
         return False   
 
-
 #################################################################################################
 ################## Static Input Parameter: Account and Appoinment Info ##########################
 #################################################################################################
@@ -300,7 +299,7 @@ enable_purge_record=False
 
 ###### login email list
 list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com"]
-######## One password for all login emails     
+######## One password for all login emails   
 login_password="COUdl@1125"
 
 ######## Convert court_label to court_label 
@@ -314,16 +313,16 @@ else:
  
 ######## Generate batch id and msg_summary
 batch_id=int(datetime.now().strftime("%Y%m%d%H%M%S"))
-msg_summary="\n\n"+"BatchID: "+str(batch_id) + "\n"   
+msg_summary="\n\n"+"BatchID: "+str(batch_id) + "\n" 
 
-      
+
 #################### Static Input Parameter: Program Configuration ##########################
 ##### Log file and db file are put in Data folder
-log_path="D:/Projects/GitHub/BookTennisCourtData/BookTennisCourtLog.txt"    
+log_path="D:/Projects/GitHub/BookTennisCourtData/BookTennisCourtLog.txt"
 db_file_path="D:/Projects/GitHub/BookTennisCourtData/TennisCourtBooking.db"
 
 ##### Chrome driver is put in project code folder
-chrome_driver_path = "D:/Projects/GitHub/UtilityRepository/BookTennisCourt/chromedriver.exe"   
+chrome_driver_path = "D:/Projects/GitHub/UtilityRepository/BookTennisCourt/chromedriver.exe" 
 
 profile_directory=r"–user-data-dir=C:\Users\Me\AppData\Local\Google\Chrome\User Data"
 login_url="https://app.courtreserve.com/Online/Account/LogIn/7629"
@@ -340,11 +339,11 @@ create_table_script="""CREATE TABLE IF NOT EXISTS Appointment
                        )
                  """
 
-try:   
-    ######## create a sqlite db and table to track the usage of login_email    
-    
+try: 
+    ######## create a sqlite db and table to track the usage of login_email  
+ 
     conn = create_tennis_court_booking_db_connection(db_file_path)
-    create_appointment_table(conn, create_table_script)   
+    create_appointment_table(conn, create_table_script) 
     
     ######## Purge Appointment table           
     if enable_purge_record==True:        
@@ -356,16 +355,16 @@ try:
     
     is_email_usable=False
     while is_email_usable==False:   
-        ##### Get login time         
+        ##### Get login time 
         now=datetime.now()
         str_login_time=now.strftime("%Y-%m-%d %H:%M:%S") 
-        # attribute_current_date_short_date=now.strftime("%#m/%#d/%Y")         
+        # attribute_current_date_short_date=now.strftime("%#m/%#d/%Y") 
         # print(attribute_current_date_short_date)       
 
         #### The courts on the date which is 7 days later than the current date are released at 12pm. 
         str_court_release_time=now.strftime("%Y-%m-%d")+" "+"12:00:00"
         dt_login_time=datetime.strptime(str_login_time, "%Y-%m-%d %H:%M:%S")
-        dt_court_release_time=datetime.strptime(str_court_release_time, "%Y-%m-%d %H:%M:%S")         
+        dt_court_release_time=datetime.strptime(str_court_release_time, "%Y-%m-%d %H:%M:%S")
         
         # if dt_login_time >= dt_court_release_time:
         #     dt_target_date=(now + timedelta(days=7)).date()
@@ -373,14 +372,14 @@ try:
         #     dt_target_date=(now + timedelta(days=6)).date() 
         
         ###### only target the date 7 days later
-        dt_target_date=(now + timedelta(days=7)).date()        
+        dt_target_date=(now + timedelta(days=7)).date()
 
-        str_target_date=str(dt_target_date)     
+        str_target_date=str(dt_target_date) 
         # xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='Friday, April 1, 2022']"                                                                                        
         attribute_formatted_target_date=dt_target_date.strftime("%A, %B %#d, %Y")   
-        # print(attribute_formatted_target_date)     
+        # print(attribute_formatted_target_date)
         str_target_day_of_month=dt_target_date.strftime("%#d")        
-        # print(str_target_day_of_month)       
+        # print(str_target_day_of_month)
    
 
         ####### If the length of str_military_hour_option is longer than 2, then conver it to a list, or use the default hour list   
@@ -414,14 +413,14 @@ try:
                 break   
         #### all emails are overused
         if is_email_usable==False:
-            raise EmailNotUsable()                
+            raise EmailNotUsable()
 
         msg_summary=msg_summary+"Login Time: "+str_login_time + "\n"   
         msg_summary=msg_summary+"Login Email: "+login_email+"\n"
         msg_summary=msg_summary+"Court Name: " + court_label +"\n"
         msg_summary=msg_summary+"Target Date: " + str_target_date +"\n"        
-        msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"       
-        # print(msg_summary)          
+        msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"
+        # print(msg_summary)
 
 
         ####### Create chrome driver       
@@ -449,8 +448,8 @@ try:
         element_password_submit_button=get_element_wait_for_load(1,"XPATH",xpath_element_password_submit_button) 
         element_password_submit_button.click()        
               
-        ####### wait until 12:00:00, then proceed
-        while datetime.now()<dt_court_release_time:  
+        ####### wait until dt_court_release_time 12:00:00, then proceed
+        while datetime.now()<dt_court_release_time:
             time.sleep(1)
             
         
@@ -469,19 +468,19 @@ try:
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
         driver.switch_to.window(driver.window_handles[-1])    
         
-        #<span class="k-icon k-i-calendar">  
-        xpath_element_button_calendar="//span[@class='k-icon k-i-calendar']"        
-        element_button_calendar=get_element_wait_for_load(1,"XPATH",xpath_element_button_calendar)          
+        #<span class="k-icon k-i-calendar">
+        xpath_element_button_calendar="//span[@class='k-icon k-i-calendar']"
+        element_button_calendar=get_element_wait_for_load(1,"XPATH",xpath_element_button_calendar)
         element_button_calendar.click()
- 
+        time.sleep(1)
         
-        time.sleep(1)  
+        
         ### Click target date
         # <a tabindex="-1" class="k-link" href="#" data-value="2022/3/1" title="Friday, April 1, 2022">1</a> 
         # xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='"+ attribute_formatted_target_date +"']"      
-        xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][text()='"+ str_target_day_of_month +"']"  
-        element_button_target_date=get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date)          
-        element_button_target_date.click()   
+        xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][text()='"+ str_target_day_of_month +"']"
+        element_button_target_date=get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date)
+        element_button_target_date.click()
         
         
         ######## Switch to the target date page   
@@ -494,11 +493,11 @@ try:
         reserved_hour_on_target_date=sqlite_get_hour_reserved_on_target_date(conn, login_email, str_target_date)       
         ### Find and click available target hour
         is_target_hour_available=False 
-        for target_military_hour in list_military_hour_option:   
+        for target_military_hour in list_military_hour_option: 
             ###### Try the hour which is not the same hour already reserved on the target date
             if target_military_hour!=reserved_hour_on_target_date:
-                target_hour=("0"+str(target_military_hour))[-2:]+":00:00"            
-                attribute_formatted_target_date_hour=dt_target_date.strftime("%a %b %d %Y") +" "+ target_hour     
+                target_hour=("0"+str(target_military_hour))[-2:]+":00:00"
+                attribute_formatted_target_date_hour=dt_target_date.strftime("%a %b %d %Y") +" "+ target_hour 
                 ### str_target_date_hour is used in database
                 str_target_date_hour=dt_target_date.strftime("%Y-%m-%d") +" "+ target_hour   
                 # print(str_target_date_hour)                       
@@ -507,7 +506,7 @@ try:
                 # print(xpath_element_button_target_date_court_time)                       
                 if get_element_wait_for_load(0.5,"XPATH", xpath_element_button_target_date_court_time) != "None":                
                     element_button_target_date_court_time=get_element_wait_for_load(0.5,"XPATH",xpath_element_button_target_date_court_time)                 
-                    element_button_target_date_court_time.click()   
+                    element_button_target_date_court_time.click() 
                     time.sleep(0.2)
                     msg_summary=msg_summary+attribute_formatted_target_date_hour +" is available for court "+ str(court_number)+"\n"
                     is_target_hour_available=True
@@ -521,7 +520,7 @@ try:
         msg_summary=msg_summary+"Check Hour End Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
         
         ######## Swith to Player page
-        driver.switch_to.window(driver.window_handles[0])        
+        driver.switch_to.window(driver.window_handles[0])
         ###### If Important Message Page appears, the emai has been overused in a day or week
         # <div class="modal-body">You have reached max number of courts allowed to reserve per day: 1</div>             
         xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per day: 1')]"       
@@ -534,21 +533,21 @@ try:
         if get_element_wait_for_load(1,"XPATH",xpath_element_important_message_page)!="None":
             sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, '', "ReachedWeeklyLimit3")
             driver.quit()
-            raise EmailNotUsable()              
+            raise EmailNotUsable()
 
         
         # <textarea autocomplete="off" class="required form-control" id="_0__Value" name="Udfs[0].Value"></textarea>          
         xpath_element_textarea_resident_with_you="//textarea[@autocomplete='off'][@class='required form-control']"      
-        element_textarea_resident_with_you=get_element_wait_for_load(1,"XPATH",xpath_element_textarea_resident_with_you)          
-        element_textarea_resident_with_you.send_keys("Jiajia Guo")     
-        time.sleep(0.2)      
+        element_textarea_resident_with_you=get_element_wait_for_load(1,"XPATH",xpath_element_textarea_resident_with_you)
+        element_textarea_resident_with_you.send_keys("Jiajia Guo") 
+        time.sleep(0.2)
 
         ###### Click the footer SAVE button        
         # <div class="modal-footer-container"><div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary btn-submit " onclick="submitCreateReservationForm()">Save</button></div></div>
-        xpath_element_bottom_save_button="//div[@class='modal-footer-container']//button[@type='button'][text()='Save']"          
-        # xpath_element_bottom_save_button="//button[@type='button'][@class='btn btn-primary btn-submit ']"      
-        element_bottom_save_button=get_element_wait_for_load(1,"XPATH",xpath_element_bottom_save_button)          
-        element_bottom_save_button.click()             
+        xpath_element_bottom_save_button="//div[@class='modal-footer-container']//button[@type='button'][text()='Save']"
+        # xpath_element_bottom_save_button="//button[@type='button'][@class='btn btn-primary btn-submit ']"
+        element_bottom_save_button=get_element_wait_for_load(1,"XPATH",xpath_element_bottom_save_button)
+        element_bottom_save_button.click() 
         time.sleep(0.2)
         
         msg_summary=msg_summary+"Booking End Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
@@ -556,8 +555,8 @@ try:
         ###### Switch to Close page        
         driver.switch_to.window(driver.window_handles[0])        
         # <button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
-        xpath_element_close_button="//button[@type='reset'][@data-dismiss='modal'][text()='Close']"      
-        element_close_button=get_element_wait_for_load(1,"XPATH",xpath_element_close_button)          
+        xpath_element_close_button="//button[@type='reset'][@data-dismiss='modal'][text()='Close']"
+        element_close_button=get_element_wait_for_load(1,"XPATH",xpath_element_close_button)
         element_close_button.click()
         time.sleep(3)        
 
