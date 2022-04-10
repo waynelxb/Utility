@@ -448,8 +448,8 @@ try:
         element_password_submit_button=get_element_wait_for_load(1,"XPATH",xpath_element_password_submit_button) 
         element_password_submit_button.click()        
               
-        ####### wait until dt_court_release_time 12:00:00, then proceed
-        while datetime.now()<dt_court_release_time:
+        ####### If current time is in (11:59:30, 12:00:00), then wait, or proceed
+        while datetime.now()>dt_court_release_time + timedelta(seconds=-30) and datetime.now()<dt_court_release_time:
             time.sleep(1)
             
         
