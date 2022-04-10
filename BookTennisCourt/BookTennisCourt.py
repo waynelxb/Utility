@@ -139,7 +139,7 @@ def log_process(file_path, message):
 
 def send_email(subject, message):
     sender_email = 'waynelxb@gmail.com'
-    sender_email_password='WAYdl@1125'
+    sender_email_password='LXBdl@33#5708'
     receiver_email=sender_email
     server = 'smtp.gmail.com'
     port = 587
