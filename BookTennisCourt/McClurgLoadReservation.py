@@ -282,7 +282,7 @@ try:
         driver.quit()          
         
     print(sqlite_get_appointment(conn)) 
-    #send_email("Tennis Court Reservation Load Succeeded", sqlite_get_appointment(conn))    
+    send_email("Tennis Court Reservation Load Succeeded", sqlite_get_appointment(conn))    
 except: 
     driver.quit()    
     exc_type, exc_value, exc_traceback = sys.exc_info()

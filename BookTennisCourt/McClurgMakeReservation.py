@@ -397,7 +397,15 @@ try:
 
         #### Check whehter the court has been logged as overused  
         if sqlite_check_court_availability(conn, court_number, str_target_date)==False:
-            raise CourtOverbooked()         
+            raise CourtOverbooked()      
+            
+            
+        msg_summary=msg_summary+"Login Time: "+str_login_time + "\n"   
+        msg_summary=msg_summary+"Court Name: " + court_label +"\n"
+        msg_summary=msg_summary+"Target Date: " + str_target_date +"\n"        
+        msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"
+        # print(msg_summary)            
+            
         
         #### Find usable login email   
         login_email=""              
@@ -415,11 +423,8 @@ try:
         if is_email_usable==False:
             raise EmailNotUsable()
 
-        msg_summary=msg_summary+"Login Time: "+str_login_time + "\n"   
+    
         msg_summary=msg_summary+"Login Email: "+login_email+"\n"
-        msg_summary=msg_summary+"Court Name: " + court_label +"\n"
-        msg_summary=msg_summary+"Target Date: " + str_target_date +"\n"        
-        msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"
         # print(msg_summary)
 
 
