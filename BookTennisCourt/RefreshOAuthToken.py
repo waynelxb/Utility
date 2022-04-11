@@ -52,7 +52,7 @@ now=datetime.now()
 
 dt_target_date=now.date()
 
-calendar_event_status=create_calendar_event(dt_target_date, 13, "Court")
+calendar_event_status=create_calendar_event(dt_target_date, 13, "OAuthTest")
 
 print(calendar_event_status)
 

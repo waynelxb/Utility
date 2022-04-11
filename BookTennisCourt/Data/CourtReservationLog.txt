@@ -4682,3 +4682,35 @@ Appointment Records:
  (20220410201854, 'liuxinbo.utube@gmail.com', '2022-04-10 20:19:09', '2022-04-17 15:00:00', 3, 'WeekDay: Sun | Code: 3318#', 'Succeeded')
 Logout Time: 2022-04-10 20:19:40
 
+
+
+BatchID: 20220410202938
+Login Time: 2022-04-10 20:29:38
+Court Name: Court #3 Arrive Residents Only
+Target Date: 2022-04-17
+Expected Hour List: [15, 16, 17, 18, 13, 14, 10, 11, 12]
+Exception: One or all the emails in ['xinbo.liu@gmail.com', 'liuxinbo.utube@gmail.com'] have been overused for target date 2022-04-17!
+Appointment Records:
+(20220410202831, 'xinbo.liu@gmail.com', '2022-04-10 20:28:31', '2022-04-11 17:00:00', 3, 'WeekDay: Mon | Code: 8724#', 'Succeeded')
+ (20220410202831, 'xinbo.liu@gmail.com', '2022-04-10 20:28:31', '2022-04-13 16:00:00', 3, 'WeekDay: Wed | Code: 1644#', 'Succeeded')
+ (20220410202831, 'xinbo.liu@gmail.com', '2022-04-10 20:28:31', '2022-04-14 16:00:00', 2, 'WeekDay: Thu | Code: 1394#', 'Succeeded')
+ (20220410202831, 'liuxinbo.utube@gmail.com', '2022-04-10 20:28:45', '2022-04-14 17:00:00', 2, 'WeekDay: Thu | Code: 2108#', 'Succeeded')
+ (20220410202831, 'liuxinbo.utube@gmail.com', '2022-04-10 20:28:45', '2022-04-17 15:00:00', 3, 'WeekDay: Sun | Code: 3318#', 'Succeeded')
+Logout Time: 2022-04-10 20:29:38
+
+
+
+BatchID: 20220410202956
+Login Time: 2022-04-10 20:29:56
+Court Name: Court #2 Arrive Residents Only
+Target Date: 2022-04-17
+Expected Hour List: [15, 16, 17, 18, 13, 14, 10, 11, 12]
+Exception: One or all the emails in ['xinbo.liu@gmail.com', 'liuxinbo.utube@gmail.com'] have been overused for target date 2022-04-17!
+Appointment Records:
+(20220410202831, 'xinbo.liu@gmail.com', '2022-04-10 20:28:31', '2022-04-11 17:00:00', 3, 'WeekDay: Mon | Code: 8724#', 'Succeeded')
+ (20220410202831, 'xinbo.liu@gmail.com', '2022-04-10 20:28:31', '2022-04-13 16:00:00', 3, 'WeekDay: Wed | Code: 1644#', 'Succeeded')
+ (20220410202831, 'xinbo.liu@gmail.com', '2022-04-10 20:28:31', '2022-04-14 16:00:00', 2, 'WeekDay: Thu | Code: 1394#', 'Succeeded')
+ (20220410202831, 'liuxinbo.utube@gmail.com', '2022-04-10 20:28:45', '2022-04-14 17:00:00', 2, 'WeekDay: Thu | Code: 2108#', 'Succeeded')
+ (20220410202831, 'liuxinbo.utube@gmail.com', '2022-04-10 20:28:45', '2022-04-17 15:00:00', 3, 'WeekDay: Sun | Code: 3318#', 'Succeeded')
+Logout Time: 2022-04-10 20:29:56
+
