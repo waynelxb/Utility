@@ -4650,3 +4650,37 @@ Appointment Records:
  (20220410195338, 'liuxinbo.utube@gmail.com', '2022-04-10 19:53:54', '2022-04-17 15:00:00', 3, 'WeekDay: Sun | Code: 3318#', 'Succeeded')
 Logout Time: 2022-04-10 20:09:26
 
+
+
+BatchID: 20220411115953
+Login Time: 2022-04-11 11:59:53
+Court Name: Court #2 Arrive Residents Only
+Target Date: 2022-04-18
+Expected Hour List: [17, 18, 16, 19]
+Login Email: xinbo.liu@gmail.com
+Booking Start Time: 2022-04-11 12:00:00
+Error: xpath_element_button_target_date=//a[@tabindex='-1'][@class='k-link'][text()='18'] cannot be loacated.
+Appointment Records:
+(20220411115500, 'xinbo.liu@gmail.com', '2022-04-11 11:55:00', '2022-04-13 16:00:00', 3, 'WeekDay: Wed | Code: 1644#', 'Succeeded')
+ (20220411115500, 'xinbo.liu@gmail.com', '2022-04-11 11:55:00', '2022-04-14 16:00:00', 2, 'WeekDay: Thu | Code: 1394#', 'Succeeded')
+ (20220411115500, 'liuxinbo.utube@gmail.com', '2022-04-11 11:55:17', '2022-04-14 17:00:00', 2, 'WeekDay: Thu | Code: 2108#', 'Succeeded')
+ (20220411115500, 'liuxinbo.utube@gmail.com', '2022-04-11 11:55:17', '2022-04-17 15:00:00', 3, 'WeekDay: Sun | Code: 3318#', 'Succeeded')
+Logout Time: 2022-04-11 12:00:07
+
+
+
+BatchID: 20220411115948
+Login Time: 2022-04-11 11:59:49
+Court Name: Court #3 Arrive Residents Only
+Target Date: 2022-04-18
+Expected Hour List: [17, 18, 16, 19]
+Login Email: xinbo.liu@gmail.com
+Booking Start Time: 2022-04-11 12:00:00
+Error: xpath_element_button_target_date=//a[@tabindex='-1'][@class='k-link'][text()='18'] cannot be loacated.
+Appointment Records:
+(20220411115500, 'xinbo.liu@gmail.com', '2022-04-11 11:55:00', '2022-04-13 16:00:00', 3, 'WeekDay: Wed | Code: 1644#', 'Succeeded')
+ (20220411115500, 'xinbo.liu@gmail.com', '2022-04-11 11:55:00', '2022-04-14 16:00:00', 2, 'WeekDay: Thu | Code: 1394#', 'Succeeded')
+ (20220411115500, 'liuxinbo.utube@gmail.com', '2022-04-11 11:55:17', '2022-04-14 17:00:00', 2, 'WeekDay: Thu | Code: 2108#', 'Succeeded')
+ (20220411115500, 'liuxinbo.utube@gmail.com', '2022-04-11 11:55:17', '2022-04-17 15:00:00', 3, 'WeekDay: Sun | Code: 3318#', 'Succeeded')
+Logout Time: 2022-04-11 12:00:07
+
