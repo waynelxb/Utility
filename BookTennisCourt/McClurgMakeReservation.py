@@ -550,14 +550,17 @@ try:
         # <textarea autocomplete="off" class="required form-control" id="_0__Value" name="Udfs[0].Value"></textarea>          
         xpath_element_textarea_resident_with_you="//textarea[@autocomplete='off'][@class='required form-control']"      
         element_textarea_resident_with_you=get_element_wait_for_load(1,"XPATH",xpath_element_textarea_resident_with_you)
+        if element_textarea_resident_with_you=="None":
+            raise ElementLocatorNotExists("xpath_element_textarea_resident_with_you="+ xpath_element_textarea_resident_with_you)          
         element_textarea_resident_with_you.send_keys("Jiajia Guo") 
         time.sleep(0.2)
 
         ###### Click the footer SAVE button        
         # <div class="modal-footer-container"><div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary btn-submit " onclick="submitCreateReservationForm()">Save</button></div></div>
         xpath_element_bottom_save_button="//div[@class='modal-footer-container']//button[@type='button'][text()='Save']"
-        # xpath_element_bottom_save_button="//button[@type='button'][@class='btn btn-primary btn-submit ']"
         element_bottom_save_button=get_element_wait_for_load(1,"XPATH",xpath_element_bottom_save_button)
+        if element_bottom_save_button=="None":
+            raise ElementLocatorNotExists("xpath_element_bottom_save_button="+ xpath_element_bottom_save_button)          
         element_bottom_save_button.click() 
         time.sleep(3)
         
@@ -568,7 +571,9 @@ try:
         # <button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
         xpath_element_close_button="//button[@type='reset'][@data-dismiss='modal'][text()='Close']"
         element_close_button=get_element_wait_for_load(1,"XPATH",xpath_element_close_button)
-        element_close_button.click()
+        if element_close_button=="None":
+            raise ElementLocatorNotExists("xpath_element_close_button="+ xpath_element_close_button)  
+        element_close_button.click()           
         # time.sleep(3)        
 
         # ###### Switch to Reservation page                 
@@ -576,7 +581,8 @@ try:
         driver.switch_to.window(driver.window_handles[-1]) 
         xpath_element_reserved_datetime_container="//div[@style='display:block;padding-top:2px;']/a[@class='btn-scheduler-edit-details']"   
         element_reserved_datetime_container=get_element_wait_for_load(3,"XPATH",xpath_element_reserved_datetime_container) 
-        # print(element_reserved_datetime_container)         
+        if element_reserved_datetime_container=="None":
+            raise ElementLocatorNotExists("xpath_element_reserved_datetime_container="+ xpath_element_reserved_datetime_container)   
         element_reserved_datetime_container.click()        
         time.sleep(3)      
     

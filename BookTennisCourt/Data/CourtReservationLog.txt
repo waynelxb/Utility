@@ -4720,3 +4720,49 @@ Appointment Records:
 
 Logout Time: 2022-04-12 20:50:55
 
+
+
+HostName: MaoDesktop
+BatchID: 20220413115948
+Login Time: 2022-04-13 11:59:48
+Court Name: Court #2 Arrive Residents Only
+Target Date: 2022-04-20
+Expected Hour List: [17, 18, 16, 19]
+Login Email: xinbo.liu@gmail.com
+Booking Start Time: 2022-04-13 12:00:00
+Check Hour Start Time: 2022-04-13 12:00:03
+Wed Apr 20 2022 17:00:00 is NOT available for court 2
+Wed Apr 20 2022 18:00:00 is NOT available for court 2
+Wed Apr 20 2022 16:00:00 is NOT available for court 2
+Wed Apr 20 2022 19:00:00 is NOT available for court 2
+Error: No time slot in [17, 18, 16, 19] is available.
+Appointment Records:
+(20220413115502, 'xinbo.liu@gmail.com', '2022-04-13 11:55:02', '2022-04-13 16:00:00', 3, 'WeekDay: Wed | Code: 1644#', 'Succeeded')
+ (20220413115502, 'xinbo.liu@gmail.com', '2022-04-13 11:55:02', '2022-04-14 16:00:00', 2, 'WeekDay: Thu | Code: 1394#', 'Succeeded')
+ (20220413115502, 'xinbo.liu@gmail.com', '2022-04-13 11:55:02', '2022-04-18 18:00:00', 3, 'WeekDay: Mon | Code: 6120#', 'Succeeded')
+ (20220413115502, 'liuxinbo.utube@gmail.com', '2022-04-13 11:55:18', '2022-04-14 17:00:00', 2, 'WeekDay: Thu | Code: 2108#', 'Succeeded')
+Logout Time: 2022-04-13 12:00:07
+
+
+
+HostName: MaoDesktop
+BatchID: 20220413115956
+Login Time: 2022-04-13 11:59:56
+Court Name: Court #3 Arrive Residents Only
+Target Date: 2022-04-20
+Expected Hour List: [17, 18, 16, 19]
+Login Email: xinbo.liu@gmail.com
+Booking Start Time: 2022-04-13 12:00:04
+Check Hour Start Time: 2022-04-13 12:00:07
+Wed Apr 20 2022 17:00:00 is NOT available for court 3
+Wed Apr 20 2022 18:00:00 is available for court 3
+Check Hour End Time: 2022-04-13 12:00:07
+Exception: One or all the emails in ['xinbo.liu@gmail.com', 'liuxinbo.utube@gmail.com'] have been overused for target date 2022-04-20!
+Appointment Records:
+(20220413115502, 'xinbo.liu@gmail.com', '2022-04-13 11:55:02', '2022-04-13 16:00:00', 3, 'WeekDay: Wed | Code: 1644#', 'Succeeded')
+ (20220413115502, 'xinbo.liu@gmail.com', '2022-04-13 11:55:02', '2022-04-14 16:00:00', 2, 'WeekDay: Thu | Code: 1394#', 'Succeeded')
+ (20220413115502, 'xinbo.liu@gmail.com', '2022-04-13 11:55:02', '2022-04-18 18:00:00', 3, 'WeekDay: Mon | Code: 6120#', 'Succeeded')
+ (20220413115502, 'liuxinbo.utube@gmail.com', '2022-04-13 11:55:18', '2022-04-14 17:00:00', 2, 'WeekDay: Thu | Code: 2108#', 'Succeeded')
+ (20220413115956, 'xinbo.liu@gmail.com', '2022-04-13 11:59:56', '2022-04-20', 3, '', 'ReachedDailyLimit1')
+Logout Time: 2022-04-13 12:00:10
+

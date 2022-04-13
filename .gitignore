@@ -340,3 +340,7 @@ ASALocalRun/
 healthchecksdb
 BookTennisCourt/Data/CourtReservation.db
 BookTennisCourt/Data/CourtReservation.db
+BookTennisCourt/CreateCalendarEvent/token.pickle
+BookTennisCourt/Data/CourtReservation.db
+BookTennisCourt/Data/CourtReservationLog.txt
+BookTennisCourt/Data/CourtReservationLog.txt
