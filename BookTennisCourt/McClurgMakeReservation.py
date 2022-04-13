@@ -314,8 +314,6 @@ else:
  
 ######## Generate batch id and msg_summary
 batch_id=int(datetime.now().strftime("%Y%m%d%H%M%S"))
-
-
 msg_summary="\n\n"+"HostName: "+socket.gethostname() + "\n" 
 msg_summary=msg_summary+"BatchID: "+str(batch_id) + "\n" 
 

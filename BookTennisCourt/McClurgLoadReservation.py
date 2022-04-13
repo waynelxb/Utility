@@ -20,7 +20,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 # from cal_setup import get_calendar_service
 import re
-
+import socket
 
 
 def get_element_wait_for_load(wait_seconds,element_type,element_expression):
@@ -188,8 +188,8 @@ login_password="COUdl@1125"
  
 ######## Generate batch id and msg_summary
 batch_id=int(datetime.now().strftime("%Y%m%d%H%M%S"))
-msg_summary="\n\n"+"BatchID: "+str(batch_id) + "\n"   
-
+msg_summary="\n\n"+"HostName: "+socket.gethostname() + "\n" 
+msg_summary=msg_summary+"BatchID: "+str(batch_id) + "\n" 
       
 #################### Static Input Parameter: Program Configuration ##########################
 ##### Log file and db file are put in Data folder
