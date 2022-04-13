@@ -561,7 +561,7 @@ try:
         # xpath_element_bottom_save_button="//button[@type='button'][@class='btn btn-primary btn-submit ']"
         element_bottom_save_button=get_element_wait_for_load(1,"XPATH",xpath_element_bottom_save_button)
         element_bottom_save_button.click() 
-        time.sleep(0.2)
+        time.sleep(3)
         
         msg_summary=msg_summary+"Booking End Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
         
@@ -571,13 +571,13 @@ try:
         xpath_element_close_button="//button[@type='reset'][@data-dismiss='modal'][text()='Close']"
         element_close_button=get_element_wait_for_load(1,"XPATH",xpath_element_close_button)
         element_close_button.click()
-        time.sleep(3)        
+        # time.sleep(3)        
 
         # ###### Switch to Reservation page                 
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
         driver.switch_to.window(driver.window_handles[-1]) 
         xpath_element_reserved_datetime_container="//div[@style='display:block;padding-top:2px;']/a[@class='btn-scheduler-edit-details']"   
-        element_reserved_datetime_container=get_element_wait_for_load(1,"XPATH",xpath_element_reserved_datetime_container) 
+        element_reserved_datetime_container=get_element_wait_for_load(3,"XPATH",xpath_element_reserved_datetime_container) 
         # print(element_reserved_datetime_container)         
         element_reserved_datetime_container.click()        
         time.sleep(3)      
@@ -586,7 +586,8 @@ try:
         driver.switch_to.window(driver.window_handles[0])        
         #<span class="title-part">5481#</span>
         xpath_element_door_code="//span[@class='title-part'][contains(text(),'#')][not(contains(text(),'Court'))]" 
-        door_code=driver.find_element(By.XPATH, xpath_element_door_code).text        
+        # door_code=get_element_wait_for_load(3,"XPATH",xpath_element_door_code).text             
+        door_code=driver.find_element(By.XPATH, xpath_element_door_code).text  
         sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number,"WeekDay: "+dt_target_date.strftime('%a')+" | Code: "+door_code, "Succeeded")       
         # print(door_code)        
         driver.quit()                                
