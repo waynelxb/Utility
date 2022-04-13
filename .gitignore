@@ -338,5 +338,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-BookTennisCourt/Data/CourtReservationLog.txt
+BookTennisCourt/Data/CourtReservation.db
 BookTennisCourt/Data/CourtReservation.db
