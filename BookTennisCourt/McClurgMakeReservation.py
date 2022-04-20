@@ -487,9 +487,13 @@ try:
         # xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='"+ attribute_formatted_target_date +"']"     
         
         xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][text()='"+ str_target_day_of_month +"']"
-        if get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date)=="None":
-            raise ElementLocatorNotExists("xpath_element_button_target_date="+ xpath_element_button_target_date)       
         
+        #### if cannot find the date, then sleep 2 second then refresh, if still cannot find it, then raise exception
+        if get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date)=="None":
+            time.sleep(2)
+            driver.refresh()
+            if get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date)=="None":
+                raise ElementLocatorNotExists("xpath_element_button_target_date="+ xpath_element_button_target_date)               
         element_button_target_date=get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date)
         element_button_target_date.click()
         

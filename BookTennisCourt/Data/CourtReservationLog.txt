@@ -4766,3 +4766,69 @@ Appointment Records:
  (20220413115956, 'xinbo.liu@gmail.com', '2022-04-13 11:59:56', '2022-04-20', 3, '', 'ReachedDailyLimit1')
 Logout Time: 2022-04-13 12:00:10
 
+
+
+HostName: MaoDesktop
+BatchID: 20220415115947
+Login Time: 2022-04-15 11:59:47
+Court Name: Court #2 Arrive Residents Only
+Target Date: 2022-04-22
+Expected Hour List: [17, 18, 16, 19]
+Login Email: liuxinbo.utube@gmail.com
+Booking Start Time: 2022-04-15 12:00:00
+Check Hour Start Time: 2022-04-15 12:00:02
+Fri Apr 22 2022 17:00:00 is NOT available for court 2
+Fri Apr 22 2022 18:00:00 is NOT available for court 2
+Fri Apr 22 2022 16:00:00 is NOT available for court 2
+Fri Apr 22 2022 19:00:00 is NOT available for court 2
+Error: No time slot in [17, 18, 16, 19] is available.
+Appointment Records:
+(20220415115758, 'xinbo.liu@gmail.com', '2022-04-15 11:57:58', '2022-04-18 18:00:00', 3, 'WeekDay: Mon | Code: 6120#', 'Succeeded')
+ (20220415115758, 'xinbo.liu@gmail.com', '2022-04-15 11:57:58', '2022-04-20 18:00:00', 3, 'WeekDay: Wed | Code: 7886#', 'Succeeded')
+ (20220415115758, 'xinbo.liu@gmail.com', '2022-04-15 11:57:58', '2022-04-21 17:00:00', 3, 'WeekDay: Thu | Code: 5319#', 'Succeeded')
+Logout Time: 2022-04-15 12:00:06
+
+
+
+HostName: MaoDesktop
+BatchID: 20220415115956
+Login Time: 2022-04-15 11:59:56
+Court Name: Court #3 Arrive Residents Only
+Target Date: 2022-04-22
+Expected Hour List: [17, 18, 16, 19]
+Login Email: liuxinbo.utube@gmail.com
+Booking Start Time: 2022-04-15 12:00:02
+Check Hour Start Time: 2022-04-15 12:00:05
+Fri Apr 22 2022 17:00:00 is NOT available for court 3
+Fri Apr 22 2022 18:00:00 is available for court 3
+Check Hour End Time: 2022-04-15 12:00:06
+Booking End Time: 2022-04-15 12:00:12
+Error: ['Traceback (most recent call last):\n', '  File "C:\\Users\\Me\\Projects\\GitHub\\Utility\\BookTennisCourt\\McClurgMakeReservation.py", line 576, in <module>\n    element_close_button.click()\n', '  File "C:\\ProgramData\\Anaconda3\\lib\\site-packages\\selenium\\webdriver\\remote\\webelement.py", line 81, in click\n    self._execute(Command.CLICK_ELEMENT)\n', '  File "C:\\ProgramData\\Anaconda3\\lib\\site-packages\\selenium\\webdriver\\remote\\webelement.py", line 710, in _execute\n    return self._parent.execute(command, params)\n', '  File "C:\\ProgramData\\Anaconda3\\lib\\site-packages\\selenium\\webdriver\\remote\\webdriver.py", line 425, in execute\n    self.error_handler.check_response(response)\n', '  File "C:\\ProgramData\\Anaconda3\\lib\\site-packages\\selenium\\webdriver\\remote\\errorhandler.py", line 247, in check_response\n    raise exception_class(message, screen, stacktrace)\n', 'selenium.common.exceptions.ElementClickInterceptedException: Message: element click intercepted: Element <button type="reset" class="btn btn-light" data-dismiss="modal">...</button> is not clickable at point (806, 21). Other element would receive the click: <div class="swal2-container swal2-center input-swal-class swal2-backdrop-show" style="overflow-y: auto;">...</div>\n  (Session info: chrome=100.0.4896.88)\nStacktrace:\nBacktrace:\n\tOrdinal0 [0x006F7413+2389011]\n\tOrdinal0 [0x00689F61+1941345]\n\tOrdinal0 [0x0057C658+837208]\n\tOrdinal0 [0x005AF8AF+1046703]\n\tOrdinal0 [0x005AD8D6+1038550]\n\tOrdinal0 [0x005AB5EB+1029611]\n\tOrdinal0 [0x005AA359+1024857]\n\tOrdinal0 [0x0059FF93+982931]\n\tOrdinal0 [0x005C414C+1130828]\n\tOrdinal0 [0x0059F974+981364]\n\tOrdinal0 [0x005C4364+1131364]\n\tOrdinal0 [0x005D4302+1196802]\n\tOrdinal0 [0x005C3F66+1130342]\n\tOrdinal0 [0x0059E546+976198]\n\tOrdinal0 [0x0059F456+980054]\n\tGetHandleVerifier [0x008A9632+1727522]\n\tGetHandleVerifier [0x0095BA4D+2457661]\n\tGetHandleVerifier [0x0078EB81+569713]\n\tGetHandleVerifier [0x0078DD76+566118]\n\tOrdinal0 [0x00690B2B+1968939]\n\tOrdinal0 [0x00695988+1989000]\n\tOrdinal0 [0x00695A75+1989237]\n\tOrdinal0 [0x0069ECB1+2026673]\n\tBaseThreadInitThunk [0x769EFA29+25]\n\tRtlGetAppContainerNamedObjectPath [0x77867A7E+286]\n\tRtlGetAppContainerNamedObjectPath [0x77867A4E+238]\n\n']
+Appointment Records:
+(20220415115758, 'xinbo.liu@gmail.com', '2022-04-15 11:57:58', '2022-04-18 18:00:00', 3, 'WeekDay: Mon | Code: 6120#', 'Succeeded')
+ (20220415115758, 'xinbo.liu@gmail.com', '2022-04-15 11:57:58', '2022-04-20 18:00:00', 3, 'WeekDay: Wed | Code: 7886#', 'Succeeded')
+ (20220415115758, 'xinbo.liu@gmail.com', '2022-04-15 11:57:58', '2022-04-21 17:00:00', 3, 'WeekDay: Thu | Code: 5319#', 'Succeeded')
+Logout Time: 2022-04-15 12:00:15
+
+
+
+HostName: MaoDesktop
+BatchID: 20220415115952
+Login Time: 2022-04-15 11:59:52
+Court Name: Court #3 Arrive Residents Only
+Target Date: 2022-04-22
+Expected Hour List: [17, 18, 16, 19]
+Login Email: liuxinbo.utube@gmail.com
+Booking Start Time: 2022-04-15 12:00:01
+Check Hour Start Time: 2022-04-15 12:00:03
+Fri Apr 22 2022 17:00:00 is NOT available for court 3
+Fri Apr 22 2022 18:00:00 is available for court 3
+Check Hour End Time: 2022-04-15 12:00:04
+Booking End Time: 2022-04-15 12:00:11
+Error: xpath_element_reserved_datetime_container=//div[@style='display:block;padding-top:2px;']/a[@class='btn-scheduler-edit-details'] cannot be loacated.
+Appointment Records:
+(20220415115758, 'xinbo.liu@gmail.com', '2022-04-15 11:57:58', '2022-04-18 18:00:00', 3, 'WeekDay: Mon | Code: 6120#', 'Succeeded')
+ (20220415115758, 'xinbo.liu@gmail.com', '2022-04-15 11:57:58', '2022-04-20 18:00:00', 3, 'WeekDay: Wed | Code: 7886#', 'Succeeded')
+ (20220415115758, 'xinbo.liu@gmail.com', '2022-04-15 11:57:58', '2022-04-21 17:00:00', 3, 'WeekDay: Thu | Code: 5319#', 'Succeeded')
+Logout Time: 2022-04-15 12:00:16
+
