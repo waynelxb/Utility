@@ -320,7 +320,7 @@ msg_summary=msg_summary+"BatchID: "+str(batch_id) + "\n"
 
 #################### Static Input Parameter: Program Configuration ##########################
 ##### Log file and db file are put in Data folder
-log_path=r"C:\Users\Me\Projects\GitHub\Utility\BookTennisCourt\Data\CourtReservationLog.txt"
+# log_path=r"C:\Users\Me\Projects\GitHub\Utility\BookTennisCourt\Data\CourtReservationLog.txt"
 db_file_path=r"C:\Users\Me\Projects\GitHub\Utility\BookTennisCourt\Data\CourtReservation.db"
 
 ##### Chrome driver is put in project code folder
@@ -614,33 +614,33 @@ try:
 except CourtOverbooked:
     msg_summary=msg_summary+"Exception: " +court_label+" has been overbooked.\n"+ sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
-    log_process(log_path, msg_summary)    
+    # log_process(log_path, msg_summary)    
     send_email("Tennis Court Booking Failed", msg_summary)   
 
 except EmailNotUsable:
     msg_summary=msg_summary+"Exception: One or all the emails in "+str(list_email)+" have been overused for target date "+str_target_date+"!\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
-    log_process(log_path, msg_summary)    
+    # log_process(log_path, msg_summary)    
     send_email("Tennis Court Booking Failed", msg_summary)    
     
 except ElementLocatorNotExists as e:
     driver.quit()
     msg_summary=msg_summary+"Error: "+ e.message +" cannot be loacated.\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
-    log_process(log_path, msg_summary)    
+    # log_process(log_path, msg_summary)    
     send_email("Tennis Court Booking Failed", msg_summary)   
     
 except CourtNumberNotExists:
     msg_summary=msg_summary+"Error: Court "+ court_number + " doesn't exist.\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
-    log_process(log_path, msg_summary)
+    # log_process(log_path, msg_summary)
     send_email("Tennis Court Booking Failed", msg_summary)   
     
 except TimeNotAvailable:
     driver.quit()
     msg_summary=msg_summary+"Error: No time slot in "+ str(list_military_hour_option) + " is available.\n"+sqlite_get_appointment(conn) +"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
-    log_process(log_path, msg_summary)
+    # log_process(log_path, msg_summary)
     send_email("Tennis Court Booking Failed", msg_summary)    
 
 except: 
@@ -649,5 +649,5 @@ except:
     exceptMessage=repr(traceback.format_exception(exc_type, exc_value, exc_traceback))
     msg_summary=msg_summary+"Error: "+exceptMessage +"\n" +sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)   
-    log_process(log_path, msg_summary)
+    # log_process(log_path, msg_summary)
     send_email("Tennis Court Booking Failed", msg_summary)    
