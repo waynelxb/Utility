@@ -583,7 +583,10 @@ try:
         # ###### Switch to Reservation page                 
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
         driver.switch_to.window(driver.window_handles[-1]) 
-        xpath_element_reserved_datetime_container="//div[@style='display:block;padding-top:2px;']/a[@class='btn-scheduler-edit-details']"   
+        time.sleep(3)
+        driver.refresh()
+        # xpath_element_reserved_datetime_container="//div[@style='display:block;padding-top:2px;']/a[@class='btn-scheduler-edit-details']"   
+        xpath_element_reserved_datetime_container="//a[@class='btn-scheduler-edit-details'][text()='Details']"   
         element_reserved_datetime_container=get_element_wait_for_load(3,"XPATH",xpath_element_reserved_datetime_container) 
         if element_reserved_datetime_container=="None":
             raise ElementLocatorNotExists("xpath_element_reserved_datetime_container="+ xpath_element_reserved_datetime_container)   

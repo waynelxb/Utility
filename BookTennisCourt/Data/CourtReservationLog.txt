@@ -4832,3 +4832,57 @@ Appointment Records:
  (20220415115758, 'xinbo.liu@gmail.com', '2022-04-15 11:57:58', '2022-04-21 17:00:00', 3, 'WeekDay: Thu | Code: 5319#', 'Succeeded')
 Logout Time: 2022-04-15 12:00:16
 
+
+
+HostName: MaoDesktop
+BatchID: 20220420115952
+Login Time: 2022-04-20 11:59:52
+Court Name: Court #3 Arrive Residents Only
+Target Date: 2022-04-27
+Expected Hour List: [17, 18, 16, 19]
+Login Email: xinbo.liu@gmail.com
+Booking Start Time: 2022-04-20 12:00:00
+Error: xpath_element_button_target_date=//a[@tabindex='-1'][@class='k-link'][text()='27'] cannot be loacated.
+Appointment Records:
+(20220420115649, 'xinbo.liu@gmail.com', '2022-04-20 11:56:50', '2022-04-21 17:00:00', 3, 'WeekDay: Thu | Code: 5319#', 'Succeeded')
+ (20220420115649, 'xinbo.liu@gmail.com', '2022-04-20 11:56:50', '2022-04-25 17:00:00', 3, 'WeekDay: Mon | Code: 8307#', 'Succeeded')
+ (20220420115649, 'xinbo.liu@gmail.com', '2022-04-20 11:56:50', '2022-04-26 18:00:00', 3, 'WeekDay: Tue | Code: 9143#', 'Succeeded')
+ (20220420115649, 'liuxinbo.utube@gmail.com', '2022-04-20 11:57:06', '2022-04-22 18:00:00', 3, 'WeekDay: Fri | Code: 6569#', 'Succeeded')
+Logout Time: 2022-04-20 12:00:10
+
+
+
+HostName: MaoDesktop
+BatchID: 20220420115948
+Login Time: 2022-04-20 11:59:48
+Court Name: Court #2 Arrive Residents Only
+Target Date: 2022-04-27
+Expected Hour List: [17, 18, 16, 19]
+Login Email: xinbo.liu@gmail.com
+Booking Start Time: 2022-04-20 12:00:00
+Error: xpath_element_button_target_date=//a[@tabindex='-1'][@class='k-link'][text()='27'] cannot be loacated.
+Appointment Records:
+(20220420115649, 'xinbo.liu@gmail.com', '2022-04-20 11:56:50', '2022-04-21 17:00:00', 3, 'WeekDay: Thu | Code: 5319#', 'Succeeded')
+ (20220420115649, 'xinbo.liu@gmail.com', '2022-04-20 11:56:50', '2022-04-25 17:00:00', 3, 'WeekDay: Mon | Code: 8307#', 'Succeeded')
+ (20220420115649, 'xinbo.liu@gmail.com', '2022-04-20 11:56:50', '2022-04-26 18:00:00', 3, 'WeekDay: Tue | Code: 9143#', 'Succeeded')
+ (20220420115649, 'liuxinbo.utube@gmail.com', '2022-04-20 11:57:06', '2022-04-22 18:00:00', 3, 'WeekDay: Fri | Code: 6569#', 'Succeeded')
+Logout Time: 2022-04-20 12:00:11
+
+
+
+HostName: MaoDesktop
+BatchID: 20220420115956
+Login Time: 2022-04-20 11:59:56
+Court Name: Court #3 Arrive Residents Only
+Target Date: 2022-04-27
+Expected Hour List: [17, 18, 16, 19]
+Login Email: xinbo.liu@gmail.com
+Booking Start Time: 2022-04-20 12:00:02
+Error: xpath_element_button_target_date=//a[@tabindex='-1'][@class='k-link'][text()='27'] cannot be loacated.
+Appointment Records:
+(20220420115649, 'xinbo.liu@gmail.com', '2022-04-20 11:56:50', '2022-04-21 17:00:00', 3, 'WeekDay: Thu | Code: 5319#', 'Succeeded')
+ (20220420115649, 'xinbo.liu@gmail.com', '2022-04-20 11:56:50', '2022-04-25 17:00:00', 3, 'WeekDay: Mon | Code: 8307#', 'Succeeded')
+ (20220420115649, 'xinbo.liu@gmail.com', '2022-04-20 11:56:50', '2022-04-26 18:00:00', 3, 'WeekDay: Tue | Code: 9143#', 'Succeeded')
+ (20220420115649, 'liuxinbo.utube@gmail.com', '2022-04-20 11:57:06', '2022-04-22 18:00:00', 3, 'WeekDay: Fri | Code: 6569#', 'Succeeded')
+Logout Time: 2022-04-20 12:00:12
+
