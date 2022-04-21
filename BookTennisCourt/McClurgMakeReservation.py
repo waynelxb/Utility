@@ -580,34 +580,36 @@ try:
         element_close_button.click()           
         # time.sleep(3)        
 
-        # ###### Switch to Reservation page                 
-        WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
-        driver.switch_to.window(driver.window_handles[-1]) 
-        time.sleep(3)
-        driver.refresh()
-        # xpath_element_reserved_datetime_container="//div[@style='display:block;padding-top:2px;']/a[@class='btn-scheduler-edit-details']"   
-        xpath_element_reserved_datetime_container="//a[@class='btn-scheduler-edit-details'][text()='Details']"   
-        element_reserved_datetime_container=get_element_wait_for_load(3,"XPATH",xpath_element_reserved_datetime_container) 
-        if element_reserved_datetime_container=="None":
-            raise ElementLocatorNotExists("xpath_element_reserved_datetime_container="+ xpath_element_reserved_datetime_container)   
-        element_reserved_datetime_container.click()        
-        time.sleep(3)      
+        # # ###### Switch to Reservation page                 
+        # WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
+        # driver.switch_to.window(driver.window_handles[-1]) 
+        # time.sleep(3)
+        # driver.refresh()
+        # # xpath_element_reserved_datetime_container="//div[@style='display:block;padding-top:2px;']/a[@class='btn-scheduler-edit-details']"   
+        # xpath_element_reserved_datetime_container="//a[@class='btn-scheduler-edit-details'][text()='Details']"   
+        # element_reserved_datetime_container=get_element_wait_for_load(3,"XPATH",xpath_element_reserved_datetime_container) 
+        # if element_reserved_datetime_container=="None":
+        #     raise ElementLocatorNotExists("xpath_element_reserved_datetime_container="+ xpath_element_reserved_datetime_container)   
+        # element_reserved_datetime_container.click()        
+        # time.sleep(3)      
     
-        ###### Switch to Reservation Details page        
-        driver.switch_to.window(driver.window_handles[0])        
-        #<span class="title-part">5481#</span>
-        xpath_element_door_code="//span[@class='title-part'][contains(text(),'#')][not(contains(text(),'Court'))]" 
-        # door_code=get_element_wait_for_load(3,"XPATH",xpath_element_door_code).text             
-        door_code=driver.find_element(By.XPATH, xpath_element_door_code).text  
-        sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number,"WeekDay: "+dt_target_date.strftime('%a')+" | Code: "+door_code, "Succeeded")       
-        # print(door_code)        
+        # ###### Switch to Reservation Details page        
+        # driver.switch_to.window(driver.window_handles[0])        
+        # #<span class="title-part">5481#</span>
+        # xpath_element_door_code="//span[@class='title-part'][contains(text(),'#')][not(contains(text(),'Court'))]" 
+        # # door_code=get_element_wait_for_load(3,"XPATH",xpath_element_door_code).text             
+        # door_code=driver.find_element(By.XPATH, xpath_element_door_code).text  
+        # sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number,"WeekDay: "+dt_target_date.strftime('%a')+" | Code: "+door_code, "Succeeded")  
+        
+        sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date_hour, court_number,"WeekDay: "+dt_target_date.strftime('%a'), "Succeeded")      
         driver.quit()                                
         
         #### Create calendar event
-        calendar_event_status=create_calendar_event(dt_target_date, target_military_hour, "Court "+str(court_number)+" Code: "+ door_code +" Login:"+ login_email) 
+        # calendar_event_status=create_calendar_event(dt_target_date, target_military_hour, "Court "+str(court_number)+" Code: "+ door_code +" Login:"+ login_email)
+        calendar_event_status=create_calendar_event(dt_target_date, target_military_hour, "Court "+str(court_number)+" Login:"+ login_email)
         
         #### Send success email
-        msg_summary=msg_summary+"Door Code:"+door_code+"\n"+"Reservations:"+sqlite_get_appointment(conn)+calendar_event_status+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"        
+        msg_summary=msg_summary+"Reservations:"+sqlite_get_appointment(conn)+calendar_event_status+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"        
         send_email("Tennis Court Booking Succeeded", msg_summary) 
                    
 
