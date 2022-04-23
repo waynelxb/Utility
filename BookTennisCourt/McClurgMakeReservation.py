@@ -184,7 +184,7 @@ def sqlite_insert_appointment(conn, batch_id, login_email, login_time, appt_time
 def sqlite_get_appointment(conn):    
     cur=conn.cursor()  
     ### get all appointment week records    
-    select_all_query="select * from Appointment"
+    select_all_query="select * from Appointment order by AppointmentTime"
     cur.execute(select_all_query)  
     query_result=cur.fetchall()                                  
     cur.close()
