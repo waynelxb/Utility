@@ -298,8 +298,20 @@ else:
 enable_purge_record=False
 
 
+host_name=socket.gethostname()
 ###### login email list
 list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com"]
+
+
+######## To limite the confliction 
+if host_name=="MaoDesktop":
+    list_email=["xinbo.liu@gmail.com"]
+elif host_name=="mydesktop":
+    list_email=["liuxinbo.utube@gmail.com"]
+else: 
+    list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com"]    
+    
+    
 ######## One password for all login emails   
 login_password="COUdl@1125"
 
@@ -311,10 +323,12 @@ elif (court_number=="3"):
 else:
     raise CourtNumberNotExists() 
 
+
+
  
 ######## Generate batch id and msg_summary
 batch_id=int(datetime.now().strftime("%Y%m%d%H%M%S"))
-msg_summary="\n\n"+"HostName: "+socket.gethostname() + "\n" 
+msg_summary="\n\n"+"HostName: "+host_name + "\n" 
 msg_summary=msg_summary+"BatchID: "+str(batch_id) + "\n" 
 
 
