@@ -1,8 +1,8 @@
 ###########################
 ##### Version 2.0 #########
 ###########################
-
-
+from os.path import exists
+import os
 import sys
 import traceback
 from datetime import datetime  
@@ -51,9 +51,11 @@ def create_calendar_event(event_date, event_hour, event_summary):
 now=datetime.now()
 
 dt_target_date=now.date()
+token_path=r"C:\Users\Me\Projects\GitHub\Utility\BookTennisCourt\CreateCalendarEvent\token.pickle"
 
+if exists(token_path)==True:
+    os.remove(token_path)
 calendar_event_status=create_calendar_event(dt_target_date, 13, "OAuthTest")
-
 print(calendar_event_status)
 
 
