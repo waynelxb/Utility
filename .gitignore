@@ -341,3 +341,4 @@ healthchecksdb
 BookTennisCourt/CreateCalendarEvent/token.pickle
 BookTennisCourt/Data/CourtReservationLog.txt
 BookTennisCourt/Data/CourtReservation.db
+*.pickle
