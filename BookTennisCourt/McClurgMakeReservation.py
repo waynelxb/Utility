@@ -323,8 +323,6 @@ elif (court_number=="3"):
 else:
     raise CourtNumberNotExists() 
 
-
-
  
 ######## Generate batch id and msg_summary
 batch_id=int(datetime.now().strftime("%Y%m%d%H%M%S"))
@@ -534,7 +532,7 @@ try:
                 xpath_element_button_target_date_court_time="//button[contains(@start, '"+attribute_formatted_target_date_hour +"')][@courtlabel='"+court_label+"'][@class='btn btn-default slot-btn m-auto']"         
                 # print(xpath_element_button_target_date_court_time)                       
                 if get_element_wait_for_load(0.5,"XPATH", xpath_element_button_target_date_court_time) != "None":                
-                    element_button_target_date_court_time=get_element_wait_for_load(0.5,"XPATH",xpath_element_button_target_date_court_time)                 
+                    element_button_target_date_court_time=get_element_wait_for_load(0.3,"XPATH",xpath_element_button_target_date_court_time)                 
                     element_button_target_date_court_time.click() 
                     time.sleep(0.2)
                     msg_summary=msg_summary+attribute_formatted_target_date_hour +" is available for court "+ str(court_number)+"\n"
@@ -572,6 +570,7 @@ try:
             raise ElementLocatorNotExists("xpath_element_textarea_resident_with_you="+ xpath_element_textarea_resident_with_you)          
         element_textarea_resident_with_you.send_keys("Jiajia Guo") 
         time.sleep(0.2)
+        
 
         ###### Click the footer SAVE button        
         # <div class="modal-footer-container"><div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary btn-submit " onclick="submitCreateReservationForm()">Save</button></div></div>
@@ -580,9 +579,8 @@ try:
         if element_bottom_save_button=="None":
             raise ElementLocatorNotExists("xpath_element_bottom_save_button="+ xpath_element_bottom_save_button)          
         element_bottom_save_button.click() 
-        time.sleep(3)
+        time.sleep(0.2)
         
-        msg_summary=msg_summary+"Booking End Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
         
         ###### Switch to Close page        
         driver.switch_to.window(driver.window_handles[0])        
@@ -591,7 +589,8 @@ try:
         element_close_button=get_element_wait_for_load(1,"XPATH",xpath_element_close_button)
         if element_close_button=="None":
             raise ElementLocatorNotExists("xpath_element_close_button="+ xpath_element_close_button)  
-        element_close_button.click()           
+        element_close_button.click()        
+        msg_summary=msg_summary+"Booking End Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
         # time.sleep(3)        
 
         # # ###### Switch to Reservation page                 
