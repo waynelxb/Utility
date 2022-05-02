@@ -238,11 +238,21 @@ try:
         options.add_argument('--ignore-ssl-errors')
         options.add_experimental_option("excludeSwitches", ["enable-logging"])       
         driver = webdriver.Chrome(service=svc, options=options)        
-        
-        
+
         ######## Open Login page
+       
         driver.get(login_url)        
-        #### input email       
+        #### input email   
+        if login_email=="xinbo.liu@gmail.com":
+            user_name="Xinbo" 
+            login_password="COUdl@1125"
+        if login_email=="liuxinbo.utube@gmail.com":
+            user_name="Utube" 
+            login_password="COUdl@1125"
+        if login_email=="xiewanqing2019@gmail.com":
+            user_name="Wanqing" 
+            login_password="1991@Qing"
+        
         id_element_email_inputbox="UserNameOrEmail" 
         element_email_inputbox=get_element_wait_for_load(1,"ID",id_element_email_inputbox)      
         element_email_inputbox.send_keys(login_email)      

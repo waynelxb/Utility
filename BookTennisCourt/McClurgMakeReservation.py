@@ -300,20 +300,20 @@ enable_purge_record=False
 
 host_name=socket.gethostname()
 ###### login email list
-list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com"]
+# list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com","xiewanqing2019@gmail.com"]
 
 
 ######## To limite the confliction 
 if host_name=="MaoDesktop":
-    list_email=["xinbo.liu@gmail.com"]
+    list_email=["xinbo.liu@gmail.com","xiewanqing2019@gmail.com"]  
 elif host_name=="mydesktop":
     list_email=["liuxinbo.utube@gmail.com"]
 else: 
-    list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com"]    
+    list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com","xiewanqing2019@gmail.com"]    
     
     
-######## One password for all login emails   
-login_password="COUdl@1125"
+# ######## One password for all login emails   
+# login_password="COUdl@1125"
 
 ######## Convert court_label to court_label 
 if (court_number=="2"):
@@ -405,7 +405,7 @@ try:
             if(dt_target_date.weekday()>=5):
                 list_military_hour_option=[15,16,17,18,13,14,10,11,12]
             else:
-                list_military_hour_option=[17,18,16,19]                   
+                list_military_hour_option=[17,18,16,19,20]                   
         #### Delete the old records not in the current appoitment week  
         # sqlite_delete_old_appointment(conn, str_target_date)
 
@@ -428,9 +428,14 @@ try:
             if sqlite_check_email_usability(conn, email, str_target_date, court_number)  == True:
                 login_email=email  
                 if login_email=="xinbo.liu@gmail.com":
-                    user_name="Xinbo"  
+                    user_name="Xinbo" 
+                    login_password="COUdl@1125"
                 if login_email=="liuxinbo.utube@gmail.com":
                     user_name="Utube" 
+                    login_password="COUdl@1125"
+                if login_email=="xiewanqing2019@gmail.com":
+                    user_name="Wanqing" 
+                    login_password="1991@Qing"                   
                 is_email_usable=True
                 break   
         #### all emails are overused
@@ -551,13 +556,13 @@ try:
         ###### If Important Message Page appears, the emai has been overused in a day or week
         # <div class="modal-body">You have reached max number of courts allowed to reserve per day: 1</div>             
         xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per day: 1')]"       
-        if get_element_wait_for_load(1,"XPATH",xpath_element_important_message_page)!="None":
+        if get_element_wait_for_load(0.5,"XPATH",xpath_element_important_message_page)!="None":
             sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, '', "ReachedDailyLimit1")
             driver.quit()
             raise EmailNotUsable()
         #<div class="modal-body">You have reached max number of courts allowed to reserve per week: 3</div>
         xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per week: 3')]"  
-        if get_element_wait_for_load(1,"XPATH",xpath_element_important_message_page)!="None":
+        if get_element_wait_for_load(0.5,"XPATH",xpath_element_important_message_page)!="None":
             sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, '', "ReachedWeeklyLimit3")
             driver.quit()
             raise EmailNotUsable()
