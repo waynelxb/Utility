@@ -182,7 +182,7 @@ enable_purge_record=True
 
 
 ###### login email list"xinbo.liu@gmail.com"
-list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com"]
+list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com","xiewanqing2019@gmail.com"]
 ######## One password for all login emails     
 login_password="COUdl@1125"
  
