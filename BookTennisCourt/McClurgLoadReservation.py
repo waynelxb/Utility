@@ -99,11 +99,12 @@ def sqlite_insert_appointment(conn, batch_id, login_email, login_time, appt_time
 def sqlite_get_appointment(conn):    
     cur=conn.cursor()  
     ### get all appointment week records    
-    select_all_query="select * from Appointment"
+    select_all_query="select LoginEmail, strftime('%m/%d %H:00', AppointmentTime)||REPLACE(REPLACE(REPLACE(Description,'WeekDay:',''),' | ','-'),'Code: ','')||'-C'||CourtNumber AS Brief,  AppointmentStatus from Appointment order by AppointmentTime"
     cur.execute(select_all_query)  
     query_result=cur.fetchall()                                  
     cur.close()
     return("Appointment Records:\n"+ str(query_result).replace("),", ")\n") ).replace("[","").replace("]","")+"\n"
+
 
 ######## Get Info from Reservation Table ##########
 class WebTable:
@@ -182,6 +183,7 @@ enable_purge_record=True
 
 
 ###### login email list"xinbo.liu@gmail.com"
+# list_email=["xinbo.liu@gmail.com"]
 list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com","xiewanqing2019@gmail.com"]
 ######## One password for all login emails     
 login_password="COUdl@1125"
@@ -291,8 +293,8 @@ try:
                 sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str(dt_reserved_datetime), reservered_court_number[0], "WeekDay: "+dt_reserved_datetime.strftime('%a')+" | Code: "+str_reserved_code,"Succeeded")
         driver.quit()          
         
-    print(sqlite_get_appointment(conn)) 
-    # send_email("Tennis Court Reservation Load Succeeded", sqlite_get_appointment(conn))    
+    # print(sqlite_get_appointment(conn)) 
+    send_email("Tennis Court Existing Reservation", sqlite_get_appointment(conn))    
 except: 
     driver.quit()    
     exc_type, exc_value, exc_traceback = sys.exc_info()

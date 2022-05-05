@@ -184,11 +184,12 @@ def sqlite_insert_appointment(conn, batch_id, login_email, login_time, appt_time
 def sqlite_get_appointment(conn):    
     cur=conn.cursor()  
     ### get all appointment week records    
-    select_all_query="select AppointmentTime, CourtNumber, Description, LoginEmail, AppointmentStatus from Appointment order by AppointmentTime"
+    select_all_query="select LoginEmail, strftime('%m/%d %H:00', AppointmentTime)||REPLACE(REPLACE(REPLACE(Description,'WeekDay:',''),' | ','-'),'Code: ','')||'-C'||CourtNumber AS Brief,  AppointmentStatus from Appointment order by AppointmentTime"
     cur.execute(select_all_query)  
     query_result=cur.fetchall()                                  
     cur.close()
     return("Appointment Records:\n"+ str(query_result).replace("),", ")\n") ).replace("[","").replace("]","")+"\n"
+
 
 def sqlite_get_hour_reserved_on_target_date(conn, email, appt_time):    
     cur=conn.cursor()     
@@ -496,7 +497,7 @@ try:
         xpath_element_button_calendar="//span[@class='k-icon k-i-calendar']"
         element_button_calendar=get_element_wait_for_load(1,"XPATH",xpath_element_button_calendar)
         element_button_calendar.click()
-        time.sleep(1)
+        time.sleep(0.5)
         
         
         ### Click target date
@@ -507,7 +508,7 @@ try:
         
         #### if cannot find the date, then sleep 2 second then refresh, if still cannot find it, then raise exception
         if get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date)=="None":
-            time.sleep(2)
+            time.sleep(1)
             driver.refresh()
             if get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date)=="None":
                 raise ElementLocatorNotExists("xpath_element_button_target_date="+ xpath_element_button_target_date)               
@@ -553,24 +554,25 @@ try:
         
         ######## Swith to Player page
         driver.switch_to.window(driver.window_handles[0])
-        ###### If Important Message Page appears, the emai has been overused in a day or week
-        # <div class="modal-body">You have reached max number of courts allowed to reserve per day: 1</div>             
-        xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per day: 1')]"       
-        if get_element_wait_for_load(0.5,"XPATH",xpath_element_important_message_page)!="None":
-            sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, '', "ReachedDailyLimit1")
-            driver.quit()
-            raise EmailNotUsable()
-        #<div class="modal-body">You have reached max number of courts allowed to reserve per week: 3</div>
-        xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per week: 3')]"  
-        if get_element_wait_for_load(0.5,"XPATH",xpath_element_important_message_page)!="None":
-            sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, '', "ReachedWeeklyLimit3")
-            driver.quit()
-            raise EmailNotUsable()
+        
+        # ###### If Important Message Page appears, the emai has been overused in a day or week
+        # # <div class="modal-body">You have reached max number of courts allowed to reserve per day: 1</div>             
+        # xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per day: 1')]"       
+        # if get_element_wait_for_load(0.5,"XPATH",xpath_element_important_message_page)!="None":
+        #     sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, '', "ReachedDailyLimit1")
+        #     driver.quit()
+        #     raise EmailNotUsable()
+        # #<div class="modal-body">You have reached max number of courts allowed to reserve per week: 3</div>
+        # xpath_element_important_message_page="//div[contains(text(),'You have reached max number of courts allowed to reserve per week: 3')]"  
+        # if get_element_wait_for_load(0.5,"XPATH",xpath_element_important_message_page)!="None":
+        #     sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str_target_date, court_number, '', "ReachedWeeklyLimit3")
+        #     driver.quit()
+        #     raise EmailNotUsable()
 
         
         # <textarea autocomplete="off" class="required form-control" id="_0__Value" name="Udfs[0].Value"></textarea>          
         xpath_element_textarea_resident_with_you="//textarea[@autocomplete='off'][@class='required form-control']"      
-        element_textarea_resident_with_you=get_element_wait_for_load(1,"XPATH",xpath_element_textarea_resident_with_you)
+        element_textarea_resident_with_you=get_element_wait_for_load(5,"XPATH",xpath_element_textarea_resident_with_you)
         if element_textarea_resident_with_you=="None":
             raise ElementLocatorNotExists("xpath_element_textarea_resident_with_you="+ xpath_element_textarea_resident_with_you)          
         element_textarea_resident_with_you.send_keys("Jiajia Guo") 
