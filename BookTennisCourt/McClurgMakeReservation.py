@@ -301,7 +301,7 @@ enable_purge_record=False
 
 host_name=socket.gethostname()
 ###### login email list
-# list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com","xiewanqing2019@gmail.com"]
+list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com","xiewanqing2019@gmail.com"]
 
 
 ######## To limite the confliction 
@@ -394,19 +394,9 @@ try:
         attribute_formatted_target_date=dt_target_date.strftime("%A, %B %#d, %Y")   
         # print(attribute_formatted_target_date)
         str_target_day_of_month=dt_target_date.strftime("%#d")        
-        # print(str_target_day_of_month)
-   
+        # print(str_target_day_of_month)  
 
-        ####### If the length of str_military_hour_option is longer than 2, then conver it to a list, or use the default hour list   
-        input_option_length=len(str_military_hour_option)        
-        if(input_option_length>2):             
-            list_military_hour_option=str_military_hour_option[1:input_option_length-1].split(',')
-        else:
-            #### use the default hour list    
-            if(dt_target_date.weekday()>=5):
-                list_military_hour_option=[15,16,17,18,13,14,10,11,12]
-            else:
-                list_military_hour_option=[17,18,16,19,20]                   
+                
         #### Delete the old records not in the current appoitment week  
         # sqlite_delete_old_appointment(conn, str_target_date)
 
@@ -418,7 +408,7 @@ try:
         msg_summary=msg_summary+"Login Time: "+str_login_time + "\n"   
         msg_summary=msg_summary+"Court Name: " + court_label +"\n"
         msg_summary=msg_summary+"Target Date: " + str_target_date +"\n"        
-        msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"
+        # msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"
         # print(msg_summary)            
             
         
@@ -448,6 +438,22 @@ try:
         # print(msg_summary)
 
 
+        ####### If the length of str_military_hour_option is longer than 2, then conver it to a list, or use the default hour list   
+        input_option_length=len(str_military_hour_option)        
+        if(input_option_length>2):             
+            list_military_hour_option=str_military_hour_option[1:input_option_length-1].split(',')
+        else:
+            #### use the default hour list    
+            if(dt_target_date.weekday()>=5):
+                list_military_hour_option=[15,16,17,18,13,14,10,11,12]
+            else:
+                if(login_email!="xiewanqing2019@gmail.com"):
+                    list_military_hour_option=[17,18,16,19,20]  
+                else:
+                    list_military_hour_option=[18,17,19,20]
+        
+        msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"      
+        
         ####### Create chrome driver       
         svc=Service(chrome_driver_path)
         options = webdriver.ChromeOptions()
@@ -521,7 +527,7 @@ try:
         driver.switch_to.window(driver.window_handles[-1])  
         
         msg_summary=msg_summary+"Check Hour Start Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
-        
+        time.sleep(1)
         ####### Get the hour has been reserved on the target date 
         reserved_hour_on_target_date=sqlite_get_hour_reserved_on_target_date(conn, login_email, str_target_date)       
         ### Find and click available target hour
@@ -538,7 +544,7 @@ try:
                 xpath_element_button_target_date_court_time="//button[contains(@start, '"+attribute_formatted_target_date_hour +"')][@courtlabel='"+court_label+"'][@class='btn btn-default slot-btn m-auto']"         
                 # print(xpath_element_button_target_date_court_time)                       
                 if get_element_wait_for_load(0.5,"XPATH", xpath_element_button_target_date_court_time) != "None":                
-                    element_button_target_date_court_time=get_element_wait_for_load(0.3,"XPATH",xpath_element_button_target_date_court_time)                 
+                    element_button_target_date_court_time=get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date_court_time)  
                     element_button_target_date_court_time.click() 
                     time.sleep(0.2)
                     msg_summary=msg_summary+attribute_formatted_target_date_hour +" is available for court "+ str(court_number)+"\n"
@@ -569,7 +575,7 @@ try:
         #     driver.quit()
         #     raise EmailNotUsable()
 
-        
+        time.sleep(2)
         # <textarea autocomplete="off" class="required form-control" id="_0__Value" name="Udfs[0].Value"></textarea>          
         xpath_element_textarea_resident_with_you="//textarea[@autocomplete='off'][@class='required form-control']"      
         element_textarea_resident_with_you=get_element_wait_for_load(5,"XPATH",xpath_element_textarea_resident_with_you)
