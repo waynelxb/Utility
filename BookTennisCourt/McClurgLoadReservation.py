@@ -278,8 +278,6 @@ try:
             # ['', 'Arrive Residents', 'Thu, May 12th', '4:00 PM-5:00 PM', '', 'Indoor - Court #3 Arrive Residents Only', '7257#', '', 'DETAILS']
             # There are 9 fields in a row
             if len(w.row_data(i))>=9:    
-                # print(len(w.row_data(i)))
-                # print(w.row_data(i))
                 str_reserved_time=w.row_data(i)[3]
                 dash_index=str_reserved_time.find("-")
                 str_reserved_time=str_reserved_time[:dash_index]             
