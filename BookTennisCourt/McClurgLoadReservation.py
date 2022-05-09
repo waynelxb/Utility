@@ -189,7 +189,14 @@ list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com","xiewanqing2019@gma
 login_password="COUdl@1125"
  
 ######## Generate batch id and msg_summary
-batch_id=int(datetime.now().strftime("%Y%m%d%H%M%S"))
+
+now=datetime.now()
+batch_id=int(now.strftime("%Y%m%d%H%M%S"))
+str_login_time=now.strftime("%Y-%m-%d %H:%M:%S") 
+#### The booking process should be done by 12:05
+str_check_reservation_time=now.strftime("%Y-%m-%d 12:05:00") 
+taget_year = now.year   
+
 msg_summary="\n\n"+"HostName: "+socket.gethostname() + "\n" 
 msg_summary=msg_summary+"BatchID: "+str(batch_id) + "\n" 
       
@@ -229,6 +236,9 @@ try:
     for login_email in list_email:       
         now=datetime.now()
         str_login_time=now.strftime("%Y-%m-%d %H:%M:%S") 
+        ###
+        str_check_reservation_time=now.strftime("%Y-%m-%d 12:10:00") 
+        
         attribute_current_date_short_date=now.strftime("%#m/%#d/%Y")      
         taget_year = now.year            
         
@@ -296,7 +306,11 @@ try:
         driver.quit()          
         
     # print(sqlite_get_appointment(conn)) 
-    send_email("Tennis Court Existing Reservation", sqlite_get_appointment(conn))    
+    
+    #### Send the reservation records after 12:05
+    if datetime.now()>datetime.strptime(str_check_reservation_time, '%Y-%m-%d %H:%M:%S'):       
+        send_email("Tennis Court Existing Reservation", sqlite_get_appointment(conn))    
+        
 except: 
     driver.quit()    
     exc_type, exc_value, exc_traceback = sys.exc_info()

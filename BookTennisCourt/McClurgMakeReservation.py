@@ -468,15 +468,15 @@ try:
         driver.get(login_url)        
         #### input email       
         id_element_email_inputbox="UserNameOrEmail" 
-        element_email_inputbox=get_element_wait_for_load(1,"ID",id_element_email_inputbox)      
+        element_email_inputbox=get_element_wait_for_load(5,"ID",id_element_email_inputbox)      
         element_email_inputbox.send_keys(login_email)      
         #### Input password 
         id_element_password_inputbox="Password"        
-        element_password_inputbox=get_element_wait_for_load(1,"ID",id_element_password_inputbox)         
+        element_password_inputbox=get_element_wait_for_load(5,"ID",id_element_password_inputbox)         
         element_password_inputbox.send_keys(login_password)     
         ### Click button               
         xpath_element_password_submit_button="//button[@class='btn btn-log btn-block btn-thm btn-submit']"
-        element_password_submit_button=get_element_wait_for_load(1,"XPATH",xpath_element_password_submit_button) 
+        element_password_submit_button=get_element_wait_for_load(5,"XPATH",xpath_element_password_submit_button) 
         element_password_submit_button.click()        
               
         ####### If current time is in (11:59:30, 12:00:00), then wait, or proceed
@@ -491,7 +491,7 @@ try:
         driver.switch_to.window(driver.window_handles[-1])
         #### Click Arrive Streeterville
         xpath_element_ArriveStreeterville="//li[@data-sm-show='true']/a[text()='Arrive Streeterville ']"      
-        element_ArriveStreeterville=get_element_wait_for_load(1,"XPATH",xpath_element_ArriveStreeterville)          
+        element_ArriveStreeterville=get_element_wait_for_load(5,"XPATH",xpath_element_ArriveStreeterville)          
         element_ArriveStreeterville.click()   
 
         
@@ -501,9 +501,9 @@ try:
         
         #<span class="k-icon k-i-calendar">
         xpath_element_button_calendar="//span[@class='k-icon k-i-calendar']"
-        element_button_calendar=get_element_wait_for_load(1,"XPATH",xpath_element_button_calendar)
+        element_button_calendar=get_element_wait_for_load(5,"XPATH",xpath_element_button_calendar)
         element_button_calendar.click()
-        time.sleep(0.5)
+        time.sleep(1)
         
         
         ### Click target date
@@ -518,7 +518,7 @@ try:
             driver.refresh()
             if get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date)=="None":
                 raise ElementLocatorNotExists("xpath_element_button_target_date="+ xpath_element_button_target_date)               
-        element_button_target_date=get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date)
+        element_button_target_date=get_element_wait_for_load(5,"XPATH",xpath_element_button_target_date)
         element_button_target_date.click()
         
         
@@ -588,7 +588,7 @@ try:
         ###### Click the footer SAVE button        
         # <div class="modal-footer-container"><div class="modal-title-buttons"><button type="reset" class="btn btn-light" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary btn-submit " onclick="submitCreateReservationForm()">Save</button></div></div>
         xpath_element_bottom_save_button="//div[@class='modal-footer-container']//button[@type='button'][text()='Save']"
-        element_bottom_save_button=get_element_wait_for_load(1,"XPATH",xpath_element_bottom_save_button)
+        element_bottom_save_button=get_element_wait_for_load(5,"XPATH",xpath_element_bottom_save_button)
         if element_bottom_save_button=="None":
             raise ElementLocatorNotExists("xpath_element_bottom_save_button="+ xpath_element_bottom_save_button)          
         element_bottom_save_button.click() 
@@ -599,7 +599,7 @@ try:
         driver.switch_to.window(driver.window_handles[0])        
         # <button type="reset" class="btn btn-light" data-dismiss="modal">Close</button>
         xpath_element_close_button="//button[@type='reset'][@data-dismiss='modal'][text()='Close']"
-        element_close_button=get_element_wait_for_load(1,"XPATH",xpath_element_close_button)
+        element_close_button=get_element_wait_for_load(5,"XPATH",xpath_element_close_button)
         if element_close_button=="None":
             raise ElementLocatorNotExists("xpath_element_close_button="+ xpath_element_close_button)  
         element_close_button.click()        
