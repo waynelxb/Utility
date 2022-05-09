@@ -450,7 +450,7 @@ try:
                 if(login_email!="xiewanqing2019@gmail.com"):
                     list_military_hour_option=[17,18,16,19,20]  
                 else:
-                    list_military_hour_option=[18,17,19,20]
+                    list_military_hour_option=[18,19,20,17,16]
         
         msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"      
         
