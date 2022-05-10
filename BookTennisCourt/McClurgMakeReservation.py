@@ -445,12 +445,22 @@ try:
         else:
             #### use the default hour list    
             if(dt_target_date.weekday()>=5):
-                list_military_hour_option=[15,16,17,18,13,14,10,11,12]
+                
+                # list_military_hour_option=[15,16,17,18,13,14,10,11,12]
+                if(login_email=="xinbo.liu@gmail.com"):
+                    list_military_hour_option=[15,16,17,18,16]  
+                elif (login_email=="xiewanqing2019@gmail.com"):
+                    list_military_hour_option=[17,14,13,12,11]
+                elif (login_email=="liuxinbo.utube@gmail.com"):
+                    list_military_hour_option=[16,17,18,19,20]                 
+
             else:
-                if(login_email!="xiewanqing2019@gmail.com"):
+                if(login_email=="xinbo.liu@gmail.com"):
                     list_military_hour_option=[17,18,16,19,20]  
-                else:
-                    list_military_hour_option=[18,19,20,17,16]
+                elif (login_email=="xiewanqing2019@gmail.com"):
+                    list_military_hour_option=[19,18,20,17,16]
+                elif (login_email=="liuxinbo.utube@gmail.com"):
+                    list_military_hour_option=[18,17,16,19,20]
         
         msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"      
         
