@@ -296,7 +296,7 @@ else:
 ###### If enable_purge_record =True, Appointment table will be purged. This variable is set manually #####
 ###### Purge will be done by LoadTennisReservation.py in advance
 ##########################################################################################################
-enable_purge_record=False
+enable_purge_record=True
 
 
 host_name=socket.gethostname()
@@ -310,7 +310,7 @@ if host_name=="MaoDesktop":
 elif host_name=="mydesktop":
     list_email=["liuxinbo.utube@gmail.com"]
 elif host_name=="MySurface":
-    list_email=["xiewanqing2019@gmail.com", ,"liuxinbo.utube@gmail.com"]      
+    list_email=["xiewanqing2019@gmail.com", "liuxinbo.utube@gmail.com"]      
 else: 
     list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com","xiewanqing2019@gmail.com"]    
     
@@ -427,7 +427,7 @@ try:
                 if login_email=="liuxinbo.utube@gmail.com":
                     user_name="Utube" 
                     login_password="COUdl@1125"
-                if login_email=="xiewanqing2019@gmail.com"  
+                if login_email=="xiewanqing2019@gmail.com":
                     xwq_weekday_list=[2,4,6] 
                     if xwq_weekday_list.count(dt_target_date.weekday())>0:
                         user_name="Wanqing"
