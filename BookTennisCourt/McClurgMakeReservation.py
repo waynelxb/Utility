@@ -32,6 +32,7 @@ class EmailNotUsable(Exception):
    """Raised when cannot find the file"""
    pass
 
+
 class ElementLocatorNotExists(Exception):
     def __init__(self, message):
         self.message = message
@@ -314,7 +315,8 @@ elif host_name=="MySurface":
     list_email=["xiewanqing2019@gmail.com", "liuxinbo.utube@gmail.com"]      
 else: 
     list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com","xiewanqing2019@gmail.com"]    
-    
+  
+print(list_email)
     
 # ######## One password for all login emails   
 # login_password="COUdl@1125"
@@ -419,27 +421,30 @@ try:
         login_email="" 
        
         for email in list_email:
-            # print(email)
+            print(email)
             if sqlite_check_email_usability(conn, email, str_target_date, court_number)  == True:
                 login_email=email  
                 if login_email=="xinbo.liu@gmail.com":
                     user_name="Xinbo" 
                     login_password="COUdl@1125"
+                    is_email_usable=True
                 if login_email=="liuxinbo.utube@gmail.com":
                     user_name="Utube" 
                     login_password="COUdl@1125"
+                    is_email_usable=True
                 if login_email=="xiewanqing2019@gmail.com":
-                    xwq_weekday_list=[2,4,6] 
+                    xwq_weekday_list=[2,4,5,6]
                     if xwq_weekday_list.count(dt_target_date.weekday())>0:
                         user_name="Wanqing"
                         login_password="1991@Qing"
-                is_email_usable=True
+                        is_email_usable=True
+                    else:
+                        msg_summary=msg_summary+"Exception: "+ login_email + " can only be used on Wed, Fri, Sat, Sun.\n"
                 break   
         #### all emails are overused
         if is_email_usable==False:
             raise EmailNotUsable()
-
-    
+           
         msg_summary=msg_summary+"Login Email: "+login_email+"\n"
         # print(msg_summary)
 
@@ -662,7 +667,7 @@ except CourtOverbooked:
     send_email("Tennis Court Booking Failed", msg_summary)   
 
 except EmailNotUsable:
-    msg_summary=msg_summary+"Exception: One or all the emails in "+str(list_email)+" have been overused for target date "+str_target_date+"!\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
+    msg_summary=msg_summary+"Exception: One or all the emails in "+str(list_email)+" have been overused for target date "+str_target_date+", or cannot be used on the current weekday.\n"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
     print(msg_summary)
     # log_process(log_path, msg_summary)    
     send_email("Tennis Court Booking Failed", msg_summary)    
