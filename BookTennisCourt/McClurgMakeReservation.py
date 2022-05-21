@@ -267,6 +267,7 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
     # check_email_query=check_email_query              
     cur.execute(check_email_query) 
     query_result=cur.fetchone()      
+    print(query_result)
     cur.close()    
     # print(check_email_query)
     # print("check_email_query result: "+ str(query_result))
@@ -291,13 +292,13 @@ else:
 #########>>>>>>>>>>>>> Testing <<<<<<<<<<<<<<<#######
 # court_number="3"
 # str_military_hour_option=""    
-# # # str_military_hour_option = "[5,6]"    
+# # str_military_hour_option = "[5,6]"    
 
 ##########################################################################################################
 ###### If enable_purge_record =True, Appointment table will be purged. This variable is set manually #####
 ###### Purge will be done by LoadTennisReservation.py in advance
 ##########################################################################################################
-enable_purge_record=True
+enable_purge_record=False
 
 
 host_name=socket.gethostname()
