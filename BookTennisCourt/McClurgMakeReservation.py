@@ -279,19 +279,19 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
 #################################################################################################
 ################## Static Input Parameter: Account and Appoinment Info ##########################
 #################################################################################################
-if len(sys.argv) == 2:  
-    court_number=sys.argv[1]
-    str_military_hour_option=""
-elif len(sys.argv) == 3:   
-    court_number=sys.argv[1]
-    str_military_hour_option=sys.argv[2] 
-else:
-    raise IndexError("The length of sys.argv should not be less than 2 or more than 3.")    
+# if len(sys.argv) == 2:  
+#     court_number=sys.argv[1]
+#     str_military_hour_option=""
+# elif len(sys.argv) == 3:   
+#     court_number=sys.argv[1]
+#     str_military_hour_option=sys.argv[2] 
+# else:
+#     raise IndexError("The length of sys.argv should not be less than 2 or more than 3.")    
 
 
 #########>>>>>>>>>>>>> Testing <<<<<<<<<<<<<<<#######
-# court_number="3"
-# str_military_hour_option=""    
+court_number="3"
+str_military_hour_option=""    
 # # str_military_hour_option = "[5,6]"    
 
 ##########################################################################################################
@@ -426,7 +426,7 @@ try:
 
         wq_weekday_number_list=[0,2,4,5,6]
         wq_weekday_name_list = [calendar.day_name[x] for x in wq_weekday_number_list]
-        wq_weekday_name_string = ', '.join(wq_weekday_number_list)
+        wq_weekday_name_string = ', '.join(wq_weekday_name_list)
         
         for email in list_email:
             print(email)
@@ -439,7 +439,7 @@ try:
                         login_password="COUdl@1125"
                         is_email_usable=True
                     else:
-                        msg_summary=msg_summary+"Exception: "+ login_email + " can only be used on "+xb_weekday_name_string
+                        msg_summary=msg_summary+"Exception: "+ login_email + " can only be used on "+xb_weekday_name_string+"\n"
                         
                 if login_email=="xiewanqing2019@gmail.com":
                     if wq_weekday_number_list.count(dt_target_date.weekday())>0:
@@ -447,7 +447,7 @@ try:
                         login_password="1991@Qing"
                         is_email_usable=True
                     else:
-                        msg_summary=msg_summary+"Exception: "+ login_email + " can only be used on "+wq_weekday_name_string
+                        msg_summary=msg_summary+"Exception: "+ login_email + " can only be used on "+wq_weekday_name_string+"\n"
                 break   
         #### all emails are overused
         if is_email_usable==False:
