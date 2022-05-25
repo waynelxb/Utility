@@ -279,19 +279,19 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
 #################################################################################################
 ################## Static Input Parameter: Account and Appoinment Info ##########################
 #################################################################################################
-# if len(sys.argv) == 2:  
-#     court_number=sys.argv[1]
-#     str_military_hour_option=""
-# elif len(sys.argv) == 3:   
-#     court_number=sys.argv[1]
-#     str_military_hour_option=sys.argv[2] 
-# else:
-#     raise IndexError("The length of sys.argv should not be less than 2 or more than 3.")    
+if len(sys.argv) == 2:  
+    court_number=sys.argv[1]
+    str_military_hour_option=""
+elif len(sys.argv) == 3:   
+    court_number=sys.argv[1]
+    str_military_hour_option=sys.argv[2] 
+else:
+    raise IndexError("The length of sys.argv should not be less than 2 or more than 3.")    
 
 
 #########>>>>>>>>>>>>> Testing <<<<<<<<<<<<<<<#######
-court_number="3"
-str_military_hour_option=""    
+# court_number="3"
+# str_military_hour_option=""    
 # # str_military_hour_option = "[5,6]"    
 
 ##########################################################################################################
