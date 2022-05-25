@@ -20,7 +20,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from CreateCalendarEvent.cal_setup import get_calendar_service
 import socket
-
+import calendar
 
 
 class CourtOverbooked(Exception):
@@ -416,30 +416,38 @@ try:
         # msg_summary=msg_summary+"Expected Hour List: "+str(list_military_hour_option)+"\n"
         # print(msg_summary)            
             
-        
+
         #### Find usable login email   
         login_email="" 
        
+        xb_weekday_number_list=[0,1,3,4,5,6]
+        xb_weekday_name_list = [calendar.day_name[x] for x in xb_weekday_number_list]
+        xb_weekday_name_string = ', '.join(xb_weekday_name_list)
+
+        wq_weekday_number_list=[0,2,4,5,6]
+        wq_weekday_name_list = [calendar.day_name[x] for x in wq_weekday_number_list]
+        wq_weekday_name_string = ', '.join(wq_weekday_number_list)
+        
         for email in list_email:
             print(email)
             if sqlite_check_email_usability(conn, email, str_target_date, court_number)  == True:
                 login_email=email  
-                if login_email=="xinbo.liu@gmail.com":
-                    user_name="Xinbo" 
-                    login_password="COUdl@1125"
-                    is_email_usable=True
-                if login_email=="liuxinbo.utube@gmail.com":
-                    user_name="Utube" 
-                    login_password="COUdl@1125"
-                    is_email_usable=True
+                if login_email=="xinbo.liu@gmail.com" or login_email=="liuxinbo.utube@gmail.com":
+                    
+                    if xb_weekday_number_list.count(dt_target_date.weekday())>0:                    
+                        user_name="Xinbo" 
+                        login_password="COUdl@1125"
+                        is_email_usable=True
+                    else:
+                        msg_summary=msg_summary+"Exception: "+ login_email + " can only be used on "+xb_weekday_name_string
+                        
                 if login_email=="xiewanqing2019@gmail.com":
-                    xwq_weekday_list=[2,4,5,6]
-                    if xwq_weekday_list.count(dt_target_date.weekday())>0:
+                    if wq_weekday_number_list.count(dt_target_date.weekday())>0:
                         user_name="Wanqing"
                         login_password="1991@Qing"
                         is_email_usable=True
                     else:
-                        msg_summary=msg_summary+"Exception: "+ login_email + " can only be used on Wed, Fri, Sat, Sun.\n"
+                        msg_summary=msg_summary+"Exception: "+ login_email + " can only be used on "+wq_weekday_name_string
                 break   
         #### all emails are overused
         if is_email_usable==False:
