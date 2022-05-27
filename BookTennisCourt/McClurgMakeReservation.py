@@ -2,6 +2,7 @@
 ##### Version 2.0 #########
 ###########################
 
+from math import fabs
 import os
 import time
 import sys
@@ -276,23 +277,24 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
     else:
         return False   
 
-#################################################################################################
-################## Static Input Parameter: Account and Appoinment Info ##########################
-#################################################################################################
-if len(sys.argv) == 2:  
-    court_number=sys.argv[1]
-    str_military_hour_option=""
-elif len(sys.argv) == 3:   
-    court_number=sys.argv[1]
-    str_military_hour_option=sys.argv[2] 
+##############################################################
+##################  Input Parameter ##########################
+##############################################################
+is_test=False
+if is_test==False:
+
+    if len(sys.argv) == 2:  
+        court_number=sys.argv[1]
+        str_military_hour_option=""
+    elif len(sys.argv) == 3:   
+        court_number=sys.argv[1]
+        str_military_hour_option=sys.argv[2] 
+    else:
+        raise IndexError("The length of sys.argv should not be less than 2 or more than 3.")    
 else:
-    raise IndexError("The length of sys.argv should not be less than 2 or more than 3.")    
-
-
-#########>>>>>>>>>>>>> Testing <<<<<<<<<<<<<<<#######
-# court_number="3"
-# str_military_hour_option=""    
-# # str_military_hour_option = "[5,6]"    
+    court_number="3"
+    str_military_hour_option=""    
+    # # str_military_hour_option = "[5,6]"    
 
 ##########################################################################################################
 ###### If enable_purge_record =True, Appointment table will be purged. This variable is set manually #####
@@ -475,7 +477,7 @@ try:
 
             else:
                 if(login_email=="xinbo.liu@gmail.com"):
-                    list_military_hour_option=[17,18,16,19,20]  
+                    list_military_hour_option=[17,18,16,19,20]
                 elif (login_email=="xiewanqing2019@gmail.com"):
                     list_military_hour_option=[19,18,20,17,16]
                 elif (login_email=="liuxinbo.utube@gmail.com"):
