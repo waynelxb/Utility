@@ -426,7 +426,7 @@ try:
         xb_weekday_name_list = [calendar.day_name[x] for x in xb_weekday_number_list]
         xb_weekday_name_string = ', '.join(xb_weekday_name_list)
 
-        wq_weekday_number_list=[0,2,4,5,6]
+        wq_weekday_number_list=[2,5]
         wq_weekday_name_list = [calendar.day_name[x] for x in wq_weekday_number_list]
         wq_weekday_name_string = ', '.join(wq_weekday_name_list)
         
