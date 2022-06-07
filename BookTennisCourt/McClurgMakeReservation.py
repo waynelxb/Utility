@@ -141,11 +141,11 @@ def log_process(file_path, message):
 
 
 def send_email(subject, message):
-    sender_email = 'waynelxb@gmail.com'
-    sender_email_password='LXBdl@33#5708'
+    sender_email = 'ericlxb@hotmail.com'
+    sender_email_password='MIC1.602LXB@2.407'
     receiver_email=sender_email
-    server = 'smtp.gmail.com'
-    port = 587
+    server = 'smtp-mail.outlook.com'
+    port = 25
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = sender_email
@@ -156,7 +156,7 @@ def send_email(subject, message):
     s.starttls()
     s.login(sender_email, sender_email_password)
     s.sendmail(sender_email, receiver_email, msg.as_string())
-    s.quit()   
+    s.quit()    
     
 
 ############### DB Operation Functions ################################################
