@@ -282,7 +282,6 @@ def sqlite_check_email_usability(conn, email, appt_time, court_number):
 ##############################################################
 is_test=False
 if is_test==False:
-
     if len(sys.argv) == 2:  
         court_number=sys.argv[1]
         str_military_hour_option=""
@@ -305,18 +304,18 @@ enable_purge_record=False
 
 host_name=socket.gethostname()
 ###### login email list
-list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com","xiewanqing2019@gmail.com"]
+list_email=["xinbo.liu@gmail.com","xiewanqing2019@gmail.com"]
 
 
 ######## To limite the confliction 
 if host_name=="MaoDesktop":
     list_email=["xinbo.liu@gmail.com","xiewanqing2019@gmail.com"]  
 elif host_name=="mydesktop":
-    list_email=["liuxinbo.utube@gmail.com"]
+    list_email=["xinbo.liu@gmail.com"]
 elif host_name=="MySurface":
-    list_email=["xiewanqing2019@gmail.com", "liuxinbo.utube@gmail.com"]      
+    list_email=["xiewanqing2019@gmail.com"]      
 else: 
-    list_email=["xinbo.liu@gmail.com","liuxinbo.utube@gmail.com","xiewanqing2019@gmail.com"]    
+    list_email=["xinbo.liu@gmail.com","xiewanqing2019@gmail.com"]    
   
 print(list_email)
     
@@ -394,7 +393,7 @@ try:
         #     dt_target_date=(now + timedelta(days=6)).date() 
         
         ###### only target the date 7 days later
-        dt_target_date=(now + timedelta(days=7)).date()
+        dt_target_date=(now + timedelta(days=6)).date()
 
         str_target_date=str(dt_target_date) 
         # xpath_element_button_target_date="//a[@tabindex='-1'][@class='k-link'][@title='Friday, April 1, 2022']"                                                                                        
@@ -426,7 +425,7 @@ try:
         xb_weekday_name_list = [calendar.day_name[x] for x in xb_weekday_number_list]
         xb_weekday_name_string = ', '.join(xb_weekday_name_list)
 
-        wq_weekday_number_list=[2,5]
+        wq_weekday_number_list=[0,2,5,6]
         wq_weekday_name_list = [calendar.day_name[x] for x in wq_weekday_number_list]
         wq_weekday_name_string = ', '.join(wq_weekday_name_list)
         
@@ -434,7 +433,7 @@ try:
             print(email)
             if sqlite_check_email_usability(conn, email, str_target_date, court_number)  == True:
                 login_email=email  
-                if login_email=="xinbo.liu@gmail.com" or login_email=="liuxinbo.utube@gmail.com":
+                if login_email=="xinbo.liu@gmail.com":
                     
                     if xb_weekday_number_list.count(dt_target_date.weekday())>0:                    
                         user_name="Xinbo" 
@@ -477,7 +476,7 @@ try:
 
             else:
                 if(login_email=="xinbo.liu@gmail.com"):
-                    list_military_hour_option=[17,18,16,19,20]
+                    list_military_hour_option=[16,17,18,19,20]
                 elif (login_email=="xiewanqing2019@gmail.com"):
                     list_military_hour_option=[19,18,20,17,16]
                 elif (login_email=="liuxinbo.utube@gmail.com"):
@@ -521,7 +520,7 @@ try:
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(1))        
         driver.switch_to.window(driver.window_handles[-1])
         #### Click Arrive Streeterville
-        xpath_element_ArriveStreeterville="//li[@data-sm-show='true']/a[text()='Arrive Streeterville ']"      
+        xpath_element_ArriveStreeterville="//li[@class='fn-ace-parent-li'][@data-sm-show='true']"      
         element_ArriveStreeterville=get_element_wait_for_load(5,"XPATH",xpath_element_ArriveStreeterville)          
         element_ArriveStreeterville.click()   
 
@@ -572,8 +571,9 @@ try:
                 str_target_date_hour=dt_target_date.strftime("%Y-%m-%d") +" "+ target_hour   
                 # print(str_target_date_hour)                       
                 # <button start="Fri Apr 01 2022 08:00:00 GMT-0500 (Central Daylight Time)" end="Fri Apr 01 2022 09:00:00 GMT-0500 (Central Daylight Time)" instructorid="undefined" courtlabel="Court #3 Arrive Residents Only" class="btn btn-default slot-btn m-auto">Reserve 8:00 AM</button>
-                xpath_element_button_target_date_court_time="//button[contains(@start, '"+attribute_formatted_target_date_hour +"')][@courtlabel='"+court_label+"'][@class='btn btn-default slot-btn m-auto']"         
-                # print(xpath_element_button_target_date_court_time)                       
+                xpath_element_button_target_date_court_time="//button[contains(@start, '"+attribute_formatted_target_date_hour +"')][@courtlabel='"+court_label+"'][@class='btn btn-default btn-expanded-slot slot-btn m-auto']"         
+                #print(xpath_element_button_target_date_court_time)  
+
                 if get_element_wait_for_load(0.5,"XPATH", xpath_element_button_target_date_court_time) != "None":                
                     element_button_target_date_court_time=get_element_wait_for_load(1,"XPATH",xpath_element_button_target_date_court_time)  
                     element_button_target_date_court_time.click() 
@@ -608,7 +608,7 @@ try:
 
         time.sleep(2)
         # <textarea autocomplete="off" class="required form-control" id="_0__Value" name="Udfs[0].Value"></textarea>          
-        xpath_element_textarea_resident_with_you="//textarea[@autocomplete='off'][@class='required form-control']"      
+        xpath_element_textarea_resident_with_you="//textarea[@autocomplete='off'][@class='form-control']"      
         element_textarea_resident_with_you=get_element_wait_for_load(5,"XPATH",xpath_element_textarea_resident_with_you)
         if element_textarea_resident_with_you=="None":
             raise ElementLocatorNotExists("xpath_element_textarea_resident_with_you="+ xpath_element_textarea_resident_with_you)          
@@ -662,11 +662,12 @@ try:
         driver.quit()                                
         
         #### Create calendar event
-        # calendar_event_status=create_calendar_event(dt_target_date, target_military_hour, "Court "+str(court_number)+" Code: "+ door_code +" Login:"+ login_email)
-        calendar_event_status=create_calendar_event(dt_target_date, target_military_hour, "Court "+str(court_number)+" Login:"+ login_email)
+        # calendar_event_status=create_calendar_event(dt_target_date, target_military_hour, "Court "+str(court_number)+" Login:"+ login_email)
         
         #### Send success email
-        msg_summary=msg_summary+"Reservations:"+sqlite_get_appointment(conn)+calendar_event_status+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"        
+        # msg_summary=msg_summary+"Reservations:"+sqlite_get_appointment(conn)+calendar_event_status+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"    
+        msg_summary=msg_summary+"Reservations:"+sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"    
+        
         send_email("Tennis Court Booking Succeeded", msg_summary) 
                    
 
@@ -703,7 +704,7 @@ except TimeNotAvailable:
     send_email("Tennis Court Booking Failed", msg_summary)    
 
 except: 
-    driver.quit()    
+    # driver.quit()    
     exc_type, exc_value, exc_traceback = sys.exc_info()
     exceptMessage=repr(traceback.format_exception(exc_type, exc_value, exc_traceback))
     msg_summary=msg_summary+"Error: "+exceptMessage +"\n" +sqlite_get_appointment(conn)+"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"

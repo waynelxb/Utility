@@ -290,8 +290,14 @@ try:
             if len(w.row_data(i))>=9:    
                 str_reserved_time=w.row_data(i)[3]
                 dash_index=str_reserved_time.find("-")
-                str_reserved_time=str_reserved_time[:dash_index]             
-                str_reserved_datetime = w.row_data(i)[2]+" "+str(taget_year) + " "+ str_reserved_time    
+                str_reserved_time=str_reserved_time[:dash_index]  
+                #In the last week of a year, w.row_data(i)[2] will be like "Tue, Jan 3rd 2023", instead of "Tue, Jan 3rd"
+                if len(w.row_data(i)[2])<15:
+                    str_reserved_datetime = w.row_data(i)[2]+" "+str(taget_year) + " "+ str_reserved_time    
+                else:
+                    str_reserved_datetime = w.row_data(i)[2]+" "+ str_reserved_time    
+
+                #print (str_reserved_datetime)
                 str_reserved_datetime=str_reserved_datetime.replace("st","").replace("nd","").replace("rd","").replace("th","")
                 comma_index=str_reserved_datetime.find(",")
                 str_reserved_datetime=str_reserved_datetime[comma_index+1:].strip()
@@ -305,14 +311,15 @@ try:
                 sqlite_insert_appointment(conn, batch_id, login_email, str_login_time, str(dt_reserved_datetime), reservered_court_number[0], "WeekDay: "+dt_reserved_datetime.strftime('%a')+" | Code: "+str_reserved_code,"Succeeded")
         driver.quit()          
         
-    # print(sqlite_get_appointment(conn)) 
+    #print(sqlite_get_appointment(conn)) 
     
     #### Send the reservation records after 12:05
-    if datetime.now()>datetime.strptime(str_check_reservation_time, '%Y-%m-%d %H:%M:%S'):       
-        send_email("Tennis Court Existing Reservation", sqlite_get_appointment(conn))    
+    #print(datetime.strptime(str_check_reservation_time, '%Y-%m-%d %H:%M:%S'))
+    #if datetime.now()>datetime.strptime(str_check_reservation_time, '%Y-%m-%d %H:%M:%S'):       
+    send_email("Tennis Court Existing Reservation", sqlite_get_appointment(conn))    
         
 except: 
-    driver.quit()    
+    # driver.quit()    
     exc_type, exc_value, exc_traceback = sys.exc_info()
     exceptMessage=repr(traceback.format_exception(exc_type, exc_value, exc_traceback))
     msg_summary=msg_summary+"Error: "+exceptMessage +"\n" +"Logout Time: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n"
